@@ -3,6 +3,16 @@ import streamlit as st
 import pandas as pd
 from google.transit import gtfs_realtime_pb2
 
+# 👇 Custom function to extract Route and Direction from trip_id
+def parse_trip_id(trip_id):
+    try:
+        parts = trip_id.split('-')
+        route = parts[1] if len(parts) > 1 else "Unknown"
+        direction = trip_id.split('--')[1].split('-')[0] if '--' in trip_id else "Unknown"
+        return route, direction
+    except Exception:
+        return "Unknown", "Unknown"
+
 # App config
 st.set_page_config(page_title="Metro Bus Snapshot", layout="wide")
 st.title("🚍 Metro Bus Realtime Snapshot – VIC")
@@ -31,12 +41,15 @@ if response.status_code == 200:
         if entity.HasField('trip_update'):
             trip = entity.trip_update.trip
             vehicle = entity.trip_update.vehicle
-            route= trip.route_id
-             
+
+            # ✅ Parse Route and Direction from Trip ID
+            route, direction = parse_trip_id(trip.trip_id)
+
             records.append({
                 "Vehicle ID": vehicle.id if vehicle and vehicle.id else "N/A",
-                "Route ID":  route ,
-                "Trip ID": trip.trip_id
+                "Trip ID": trip.trip_id,
+                "Route": route,
+                "Direction": direction
             })
 
     df = pd.DataFrame(records)
