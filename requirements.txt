@@ -1,0 +1,4 @@
+streamlit
+requests
+gtfs-realtime-bindings
+protobuf
