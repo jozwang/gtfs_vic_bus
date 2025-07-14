@@ -50,6 +50,7 @@ if response.status_code == 200:
                 "Vehicle ID": vehicle.id if vehicle and vehicle.id else "N/A",
                 "Trip ID": trip.trip_id,
                 "Delay": trip_update.delay,
+                "Timmestamp": trip_update.timestamp,
                 "Stop Time Update": trip_update.stop_time_update,
                 "Route": route,
                 "Direction": direction
