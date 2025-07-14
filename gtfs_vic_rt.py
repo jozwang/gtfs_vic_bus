@@ -52,6 +52,7 @@ if response.status_code == 200:
                 "Start Date": trip.start_date,
                 "Start Time": trip.start_time,
                 "Delay": trip_update.delay,
+                "Arrival Delay": trip.stop_time_update.arrival.delay,
                 "Timmestamp": trip_update.timestamp,
                 "Stop Time Update": trip_update.stop_time_update,
                 "Route": route,
