@@ -39,25 +39,30 @@ if response.status_code == 200:
     records = []
     for entity in feed.entity:
         if entity.HasField('trip_update'):
-            trip = entity.trip_update.trip
-            vehicle = entity.trip_update.vehicle
             trip_update = entity.trip_update
+            trip = trip_update.trip
+            vehicle = trip_update.vehicle
 
             # ✅ Parse Route and Direction from Trip ID
             route, direction = parse_trip_id(trip.trip_id)
 
-            records.append({
-                "Vehicle ID": vehicle.id if vehicle and vehicle.id else "N/A",
-                "Trip ID": trip.trip_id,
-                "Start Date": trip.start_date,
-                "Start Time": trip.start_time,
-                "Delay": trip_update.delay,
-                "Arrival Delay": entity.stop_time_update.arrival.delay,
-                "Timmestamp": trip_update.timestamp,
-                "Stop Time Update": trip_update.stop_time_update,
-                "Route": route,
-                "Direction": direction
-            })
+            for stop in trip_update.stop_time_update:
+                arrival_delay = (
+                    stop.arrival.delay if stop.HasField("arrival") and stop.arrival.HasField("delay") else "N/A"
+                )
+                records.append({
+                    "Vehicle ID": vehicle.id if vehicle and vehicle.id else "N/A",
+                    "Trip ID": trip.trip_id,
+                    "Start Date": trip.start_date,
+                    "Start Time": trip.start_time,
+                    "Delay": trip_update.delay if trip_update.HasField("delay") else "N/A",
+                    "Arrival Delay": arrival_delay,
+                    "Timestamp": trip_update.timestamp if trip_update.HasField("timestamp") else "N/A",
+                    "Stop Time Update": stop,
+                    "Route": route,
+                    "Direction": direction,
+                    "Stop ID": stop.stop_id if stop and stop.stop_id else "N/A"
+                })
 
     df = pd.DataFrame(records)
 
