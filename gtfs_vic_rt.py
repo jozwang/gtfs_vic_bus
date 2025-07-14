@@ -35,7 +35,7 @@ if response.status_code == 200:
              
             records.append({
                 "Vehicle ID": vehicle.id if vehicle and vehicle.id else "N/A",
-                "Route ID": trip.route if route and route.id else "n/a",
+                "Route ID": route else "n/a",
                 "Trip ID": trip.trip_id
             })
 
