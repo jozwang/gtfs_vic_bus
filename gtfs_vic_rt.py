@@ -31,7 +31,7 @@ if response.status_code == 200:
         if entity.HasField('trip_update'):
             trip = entity.trip_update.trip
             vehicle = entity.trip_update.vehicle
-            route= entity.trip_update.route
+            route= trip.route
              
             records.append({
                 "Vehicle ID": vehicle.id if vehicle and vehicle.id else "N/A",
