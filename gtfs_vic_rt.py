@@ -1,5 +1,10 @@
 import requests
 from google.transit import gtfs_realtime_pb2
+import streamlit as st
+import folium
+from streamlit_folium import folium_static
+import pandas as pd
+
 
 # API endpoint for Metro Bus Trip Updates
 url = "https://data-exchange-api.vicroads.vic.gov.au/opendata/v1/gtfsr/metrobus-tripupdates"
