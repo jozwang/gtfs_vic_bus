@@ -41,6 +41,7 @@ if response.status_code == 200:
         if entity.HasField('trip_update'):
             trip = entity.trip_update.trip
             vehicle = entity.trip_update.vehicle
+            trip_update = entity.trip_update
 
             # ✅ Parse Route and Direction from Trip ID
             route, direction = parse_trip_id(trip.trip_id)
@@ -48,6 +49,7 @@ if response.status_code == 200:
             records.append({
                 "Vehicle ID": vehicle.id if vehicle and vehicle.id else "N/A",
                 "Trip ID": trip.trip_id,
+                "Delay": trip_update.delay
                 "Route": route,
                 "Direction": direction
             })
