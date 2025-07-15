@@ -102,50 +102,92 @@ if not df.empty:
     # --- Sidebar Filters ---
     st.sidebar.header("🔍 Filter Trips")
 
-    # Get unique, sorted routes, ensuring 'Unknown' is handled
-    all_routes = df["Route"].dropna().unique().tolist()
+    ## 1. Default route filter is 903
+    all_routes = sorted(df["Route"].dropna().unique().tolist())
+    # Ensure '903' is in options, handle 'Unknown'
     if "Unknown" in all_routes:
         all_routes.remove("Unknown")
-        all_routes = sorted(all_routes) + ["Unknown"]
+    if '903' in all_routes:
+        default_route_index = all_routes.index('903')
     else:
-        all_routes = sorted(all_routes)
+        default_route_index = 0 # Fallback to first item if 903 not found
 
-    selected_route = st.sidebar.selectbox("Select Route", options=all_routes)
+    # Allow 'All' for all filters - add 'All' to the options list
+    # For Route, 'All' is optional based on whether you always want a default route
+    # If 'All' is desired for Route, uncomment the line below:
+    # all_routes.insert(0, "All")
+    # if '903' is not guaranteed, and you want 'All' to be default, set index to 0
 
-    # Filter directions based on selected route
-    filtered_directions = df[df["Route"] == selected_route]["Direction"].dropna().unique().tolist()
-    if "Unknown" in filtered_directions:
-        filtered_directions.remove("Unknown")
-        filtered_directions = sorted(filtered_directions) + ["Unknown"]
+    selected_route = st.sidebar.selectbox(
+        "Select Route",
+        options=all_routes,
+        index=default_route_index # Set default to '903'
+    )
+
+    # Filter directions based on selected route (or all if 'All' route selected)
+    if selected_route == "All":
+        filtered_df_for_directions = df
     else:
-        filtered_directions = sorted(filtered_directions)
+        filtered_df_for_directions = df[df["Route"] == selected_route]
 
-    selected_direction = st.sidebar.selectbox("Select Direction", options=filtered_directions)
+    ## 2. Allow "All" for all filters & 3. Default "All" for direction
+    all_directions = sorted(filtered_df_for_directions["Direction"].dropna().unique().tolist())
+    if "Unknown" in all_directions:
+        all_directions.remove("Unknown")
+    all_directions.insert(0, "All") # Add "All" option at the beginning
+    
+    # Set default to 'All'
+    default_direction_index = all_directions.index("All") if "All" in all_directions else 0
+    selected_direction = st.sidebar.selectbox(
+        "Select Direction",
+        options=all_directions,
+        index=default_direction_index # Default to 'All'
+    )
 
     # Filter stop sequences based on selected route and direction
-    filtered_stops = df[(df["Route"] == selected_route) & (df["Direction"] == selected_direction)]["Stop Sequence"].dropna().unique().tolist()
-    # Convert to numeric for sorting if possible, then back to original type
-    try:
-        filtered_stops_numeric = sorted([s for s in filtered_stops if isinstance(s, (int, float))])
-        filtered_stops_non_numeric = sorted([s for s in filtered_stops if not isinstance(s, (int, float))])
-        filtered_stops = filtered_stops_numeric + filtered_stops_non_numeric
-    except TypeError: # Fallback if mixed types cause issues with simple sort
-        filtered_stops = sorted(filtered_stops)
+    if selected_route == "All":
+        filtered_df_for_stops = df
+    else:
+        filtered_df_for_stops = df[df["Route"] == selected_route]
 
-    selected_stop_seq = st.sidebar.selectbox("Select Stop Sequence", options=filtered_stops)
+    if selected_direction != "All":
+        filtered_df_for_stops = filtered_df_for_stops[filtered_df_for_stops["Direction"] == selected_direction]
 
-    # --- Filtered Table ---
+    ## 2. Allow "All" for all filters & 3. Default "All" for stop sequence
+    all_stops = filtered_df_for_stops["Stop Sequence"].dropna().unique().tolist()
+    
+    # Convert to numeric for sorting if possible, handling "N/A" and other non-numeric
+    numeric_stops = [s for s in all_stops if isinstance(s, (int, float)) and s != "N/A"]
+    non_numeric_stops = [s for s in all_stops if not isinstance(s, (int, float)) or s == "N/A"]
+    
+    all_stops_sorted = sorted(numeric_stops) + sorted(non_numeric_stops) # Sort numeric then non-numeric
+    all_stops_sorted.insert(0, "All") # Add "All" option at the beginning
+
+    # Set default to 'All'
+    default_stop_index = all_stops_sorted.index("All") if "All" in all_stops_sorted else 0
+    selected_stop_seq = st.sidebar.selectbox(
+        "Select Stop Sequence",
+        options=all_stops_sorted,
+        index=default_stop_index # Default to 'All'
+    )
+
+    # --- Apply Filters to DataFrame ---
     st.subheader("🚏 Filtered Trip Data")
 
-    filtered_df = df[
-        (df["Route"] == selected_route) &
-        (df["Direction"] == selected_direction) &
-        (df["Stop Sequence"] == selected_stop_seq)
-    ]
+    final_filtered_df = df.copy() # Start with a copy of the full DataFrame
 
-    if not filtered_df.empty:
-        # Reset index for cleaner display in Streamlit
-        st.dataframe(filtered_df.reset_index(drop=True), use_container_width=True)
+    if selected_route != "All":
+        final_filtered_df = final_filtered_df[final_filtered_df["Route"] == selected_route]
+    
+    if selected_direction != "All":
+        final_filtered_df = final_filtered_df[final_filtered_df["Direction"] == selected_direction]
+    
+    if selected_stop_seq != "All":
+        final_filtered_df = final_filtered_df[final_filtered_df["Stop Sequence"] == selected_stop_seq]
+
+
+    if not final_filtered_df.empty:
+        st.dataframe(final_filtered_df.reset_index(drop=True), use_container_width=True)
     else:
         st.warning("No matching records found for the selected filters.")
 else:
