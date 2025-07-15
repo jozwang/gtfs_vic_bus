@@ -60,4 +60,34 @@ if response.status_code == 200:
                     "Route": route,
                     "Direction": direction,
                     "Stop Sequence": stop_sequence,
-                    "Stop Arrival Delay": arrival_delay
+                    "Stop Arrival Delay": arrival_delay,
+                    "Arrival Time": convert_unix_to_time(arrival_time) if arrival_time else "N/A",
+                    "Departure Time": convert_unix_to_time(departure_time) if departure_time else "N/A"
+                })
+
+    df = pd.DataFrame(records)
+
+    # --- Sidebar Filters ---
+    st.sidebar.header("🔍 Filter Trips")
+    selected_route = st.sidebar.selectbox("Select Route", options=sorted(df["Route"].dropna().unique()))
+    
+    filtered_directions = df[df["Route"] == selected_route]["Direction"].dropna().unique()
+    selected_direction = st.sidebar.selectbox("Select Direction", options=sorted(filtered_directions))
+
+    filtered_stops = df[(df["Route"] == selected_route) & (df["Direction"] == selected_direction)]["Stop Sequence"].dropna().unique()
+    selected_stop_seq = st.sidebar.selectbox("Select Stop Sequence", options=sorted(filtered_stops))
+
+    # --- Filtered Table ---
+    filtered_df = df[
+        (df["Route"] == selected_route) &
+        (df["Direction"] == selected_direction) &
+        (df["Stop Sequence"] == selected_stop_seq)
+    ]
+
+    st.subheader("🚏 Filtered Trip Data")
+    if not filtered_df.empty:
+        st.dataframe(filtered_df)
+    else:
+        st.warning("No matching records found.")
+else:
+    st.error(f"API call failed. Status code: {response.status_code}")
