@@ -2,8 +2,16 @@ import requests
 import streamlit as st
 import pandas as pd
 from google.transit import gtfs_realtime_pb2
+import datetime
 
-# 👇 Custom function to extract Route and Direction from trip_id
+# 🔧 Convert Unix timestamp to readable time
+def convert_unix_to_time(unix_timestamp):
+    try:
+        return datetime.datetime.fromtimestamp(unix_timestamp).strftime('%H:%M:%S')
+    except:
+        return "N/A"
+
+# 🚏 Extract Route and Direction from trip_id
 def parse_trip_id(trip_id):
     try:
         parts = trip_id.split('-')
@@ -13,23 +21,17 @@ def parse_trip_id(trip_id):
     except Exception:
         return "Unknown", "Unknown"
 
-# App config
+# Streamlit app setup
 st.set_page_config(page_title="Metro Bus Snapshot", layout="wide")
 st.title("🚍 Metro Bus Realtime Snapshot – VIC")
 
-# API endpoint and key
+# API credentials
 api_key = "321077bd7df146b891bde8960ffa1893"
 base_url = "https://data-exchange-api.vicroads.vic.gov.au/opendata/v1/gtfsr/metrobus-tripupdates"
+headers = {"Ocp-Apim-Subscription-Key": api_key}
+params = {"subscription-key": api_key}
 
-# Combine header and query for security schemes
-headers = {
-    "Ocp-Apim-Subscription-Key": api_key
-}
-params = {
-    "subscription-key": api_key
-}
-
-# Make authenticated request
+# Make request
 response = requests.get(base_url, headers=headers, params=params)
 
 if response.status_code == 200:
@@ -43,30 +45,31 @@ if response.status_code == 200:
             trip = trip_update.trip
             vehicle = trip_update.vehicle
 
-            # ✅ Parse Route and Direction from Trip ID
             route, direction = parse_trip_id(trip.trip_id)
 
             for stop in trip_update.stop_time_update:
-                arrival_delay = (
-                    stop.arrival.delay if stop.HasField("arrival") and stop.arrival.HasField("delay") else "N/A"
-                )
+                stop_sequence = stop.stop_sequence if stop.HasField("stop_sequence") else "N/A"
+                arrival_time = stop.arrival.time if stop.HasField("arrival") and stop.arrival.HasField("time") else None
+                departure_time = stop.departure.time if stop.HasField("departure") and stop.departure.HasField("time") else None
+                arrival_delay = stop.arrival.delay if stop.HasField("arrival") and stop.arrival.HasField("delay") else "N/A"
+
                 records.append({
-                    "Vehicle ID": vehicle.id if vehicle and vehicle.id else "N/A",
+                    "Vehicle ID": vehicle.id if trip_update.HasField("vehicle") and vehicle.id else "N/A",
                     "Trip ID": trip.trip_id,
                     "Start Date": trip.start_date,
                     "Start Time": trip.start_time,
-                    "Delay": trip_update.delay if trip_update.HasField("delay") else "N/A",
-                    "Arrival Delay": arrival_delay,
-                    "Timestamp": trip_update.timestamp if trip_update.HasField("timestamp") else "N/A",
-                    "Stop Time Update": stop,
                     "Route": route,
                     "Direction": direction,
-                    "Stop ID": stop.stop_id if stop and stop.stop_id else "N/A"
+                    "Stop Arrival Delay": arrival_delay,
+                    "Stop Sequence": stop_sequence,
+                    "Arrival Time": convert_unix_to_time(arrival_time) if arrival_time else "N/A",
+                    "Departure Time": convert_unix_to_time(departure_time) if departure_time else "N/A"
                 })
 
     df = pd.DataFrame(records)
 
     if not df.empty:
+        st.subheader("🧭 Trip Details with Stop Time Updates")
         st.dataframe(df)
     else:
         st.warning("No vehicle or trip updates currently available.")
