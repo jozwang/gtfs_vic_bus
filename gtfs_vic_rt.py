@@ -4,35 +4,35 @@ import pandas as pd
 from google.transit import gtfs_realtime_pb2
 import datetime
 
-# 🔧 Convert Unix timestamp to readable time
+# Convert timestamp
 def convert_unix_to_time(unix_timestamp):
     try:
         return datetime.datetime.fromtimestamp(unix_timestamp).strftime('%H:%M:%S')
     except:
         return "N/A"
 
-# 🚏 Extract Route and Direction from trip_id
+# Parse route/direction from trip_id
 def parse_trip_id(trip_id):
     try:
         parts = trip_id.split('-')
         route = parts[1] if len(parts) > 1 else "Unknown"
         direction = trip_id.split('--')[1].split('-')[0] if '--' in trip_id else "Unknown"
         return route, direction
-    except Exception:
+    except:
         return "Unknown", "Unknown"
 
-# Streamlit app setup
+# Streamlit setup
 st.set_page_config(page_title="Metro Bus Snapshot", layout="wide")
 st.title("🚍 Metro Bus Realtime Snapshot – VIC")
 
-# API credentials
+# API setup
 api_key = "321077bd7df146b891bde8960ffa1893"
-base_url = "https://data-exchange-api.vicroads.vic.gov.au/opendata/v1/gtfsr/metrobus-tripupdates"
+url = "https://data-exchange-api.vicroads.vic.gov.au/opendata/v1/gtfsr/metrobus-tripupdates"
 headers = {"Ocp-Apim-Subscription-Key": api_key}
 params = {"subscription-key": api_key}
 
-# Make request
-response = requests.get(base_url, headers=headers, params=params)
+# Request feed
+response = requests.get(url, headers=headers, params=params)
 
 if response.status_code == 200:
     feed = gtfs_realtime_pb2.FeedMessage()
@@ -40,11 +40,10 @@ if response.status_code == 200:
 
     records = []
     for entity in feed.entity:
-        if entity.HasField('trip_update'):
+        if entity.HasField("trip_update"):
             trip_update = entity.trip_update
             trip = trip_update.trip
             vehicle = trip_update.vehicle
-
             route, direction = parse_trip_id(trip.trip_id)
 
             for stop in trip_update.stop_time_update:
@@ -60,18 +59,5 @@ if response.status_code == 200:
                     "Start Time": trip.start_time,
                     "Route": route,
                     "Direction": direction,
-                    "Stop Arrival Delay": arrival_delay,
                     "Stop Sequence": stop_sequence,
-                    "Arrival Time": convert_unix_to_time(arrival_time) if arrival_time else "N/A",
-                    "Departure Time": convert_unix_to_time(departure_time) if departure_time else "N/A"
-                })
-
-    df = pd.DataFrame(records)
-
-    if not df.empty:
-        st.subheader("🧭 Trip Details with Stop Time Updates")
-        st.dataframe(df)
-    else:
-        st.warning("No vehicle or trip updates currently available.")
-else:
-    st.error(f"API call failed. Status code: {response.status_code}")
+                    "Stop Arrival Delay": arrival_delay
