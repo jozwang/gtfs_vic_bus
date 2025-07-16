@@ -140,7 +140,7 @@ def load_static_stop_times_data(zip_url):
 
         with zipfile.ZipFile(zip_content, 'r') as zf:
             try:
-                with zf.open('stop_times.csv') as csv_file:
+                with zf.open('stop_times_4_kmel.csv') as csv_file:
                     df = pd.read_csv(csv_file, sep=',')
                     # Ensure trip_id and stop_sequence are of comparable types
                     df['trip_id'] = df['trip_id'].astype(str)
