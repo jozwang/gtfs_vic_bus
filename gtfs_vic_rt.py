@@ -1,16 +1,8 @@
 import requests
+import streamlit as st
 import pandas as pd
 from google.transit import gtfs_realtime_pb2
-from tabulate import tabulate
 import datetime
-import zipfile
-import io
-
-# link to the GTFS Realtime API documentation:
-# https://discover.data.vic.gov.au/dataset/gtfs-realtime/resource/d075af50-f8d9-449d-89bf-1899940c5e38
-
-# --- Static Data URLs ---
-STOP_TIMES_ZIP_URL = "https://raw.githubusercontent.com/jozwang/gtfs_vic_bus/refs/heads/main/stop_times_4_kmel.zip"
 
 # --- Utility Functions ---
 
@@ -28,28 +20,9 @@ def convert_unix_to_time(unix_timestamp):
     except (ValueError, TypeError):
         return "N/A"
 
-def time_string_to_seconds(time_str):
-    """
-    Converts a time string (HH:MM:SS) to total seconds from midnight.
-    Handles times > 23:59:59 as per GTFS spec (e.g., 25:00:00).
-    Returns None if invalid.
-    """
-    if not isinstance(time_str, str):
-        return None
-    try:
-        parts = list(map(int, time_str.split(':')))
-        if len(parts) == 3:
-            hours, minutes, seconds = parts
-            return hours * 3600 + minutes * 60 + seconds
-        return None
-    except ValueError:
-        return None
-
 def parse_trip_id(trip_id):
     """Extracts Route and Direction from a PTV GTFS Realtime trip_id."""
     route, direction = "Unknown", "Unknown"
-    if not isinstance(trip_id, str):
-        return route, direction
     try:
         parts = trip_id.split('-')
         if len(parts) > 1:
@@ -64,240 +37,233 @@ def parse_trip_id(trip_id):
             else:
                 direction = "Unknown"
     except Exception:
-        pass # In a real app, you might log this error
+        # Log the exception for debugging in a real application
+        pass
     return route, direction
 
-def load_static_stop_times_data(zip_url):
-    """
-    Downloads a stop_times.zip file from a URL, extracts stop_times.csv,
-    and returns it as a Pandas DataFrame.
-    """
-    print(f"Attempting to load stop_times.csv from: {zip_url}")
-    try:
-        response = requests.get(zip_url, stream=True)
-        response.raise_for_status()
+# --- Streamlit Application Setup ---
 
-        zip_content = io.BytesIO(response.content)
+st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
+st.title("🚍 Metro Bus Realtime Snapshot – VIC")
 
-        with zipfile.ZipFile(zip_content, 'r') as zf:
-            try:
-                with zf.open('stop_times.csv') as csv_file:
-                    df = pd.read_csv(csv_file, sep=',')
-                    # Ensure trip_id and stop_sequence are of comparable types
-                    df['trip_id'] = df['trip_id'].astype(str)
-                    df['stop_sequence'] = df['stop_sequence'].astype(int)
-                    print("`stop_times.csv` loaded successfully from ZIP!")
-                    return df
-            except KeyError:
-                print("Error: 'stop_times.csv' not found inside the zip file.")
-                print("Please ensure the CSV file is named 'stop_times.csv' and is at the root of the zip.")
-                return None
-    except requests.exceptions.RequestException as e:
-        print(f"Error downloading the stop_times.zip file from '{zip_url}': {e}")
-        print("Please check the URL and your internet connection.")
-        return None
-    except zipfile.BadZipFile:
-        print(f"Error: The downloaded file from '{zip_url}' is not a valid zip file.")
-        return None
-    except Exception as e:
-        print(f"An unexpected error occurred during stop_times.csv processing: {e}")
-        return None
+# --- API Configuration ---
 
-
-# API endpoint and key
 api_key = "321077bd7df146b891bde8960ffa1893"
 base_url = "https://data-exchange-api.vicroads.vic.gov.au/opendata/v1/gtfsr/metrobus-tripupdates"
+headers = {"Ocp-Apim-Subscription-Key": api_key}
+params = {"subscription-key": api_key}
 
-# Combine header and query for security schemes
-headers = {
-    "Ocp-Apim-Subscription-Key": api_key
-}
-params = {
-    "subscription-key": api_key
-}
+# --- Data Fetching and Processing ---
 
-# --- Main Data Processing ---
+@st.cache_data(ttl=30) # Cache data for 30 seconds to reduce API calls
+def fetch_and_process_data():
+    """Fetches data from the GTFS Realtime API and processes it into a DataFrame."""
+    try:
+        response = requests.get(base_url, headers=headers, params=params, timeout=10) # Added timeout
+        response.raise_for_status() # Raise an HTTPError for bad responses (4xx or 5xx)
 
-# Load static stop_times data from GitHub ZIP
-static_stop_times_df = load_static_stop_times_data(STOP_TIMES_ZIP_URL)
+        feed = gtfs_realtime_pb2.FeedMessage()
+        feed.ParseFromString(response.content)
 
-response = requests.get(base_url, headers=headers, params=params)
+        records = []
+        
+        # Extract Feed Header information once (these fields will be duplicated per row in the DataFrame)
+        feed_header_version = feed.header.gtfs_realtime_version if feed.header.HasField("gtfs_realtime_version") else "Not Provided"
+        feed_header_incrementality = feed.header.incrementality if feed.header.HasField("incrementality") else "Not Provided"
+        feed_header_timestamp = feed.header.timestamp if feed.header.HasField("timestamp") else "Not Provided"
 
-if response.status_code == 200:
-    feed = gtfs_realtime_pb2.FeedMessage()
-    feed.ParseFromString(response.content)
+        for entity in feed.entity:
+            # Entity-level fields
+            entity_id = entity.id if entity.HasField("id") else "Not Provided"
+            entity_is_deleted = entity.is_deleted if entity.HasField("is_deleted") else "Not Provided"
 
-    records = []
-    
-    # Extract Feed Header information once (these fields will be duplicated per row in the DataFrame)
-    feed_header_version = feed.header.gtfs_realtime_version if feed.header.HasField("gtfs_realtime_version") else "Not Provided"
-    feed_header_incrementality = feed.header.incrementality if feed.header.HasField("incrementality") else "Not Provided"
-    feed_header_timestamp = feed.header.timestamp if feed.header.HasField("timestamp") else "Not Provided"
+            if entity.HasField('trip_update'):
+                trip_update = entity.trip_update
+                trip = trip_update.trip
+                vehicle = trip_update.vehicle
 
-    for entity in feed.entity:
-        # Initialize entity-level fields at the start of each entity loop iteration
-        # This ensures they are always defined, even if 'trip_update' is not present
-        entity_id = "Not Provided"
-        entity_is_deleted = "Not Provided"
+                # TripDescriptor fields (from trip_update.trip)
+                trip_id = trip.trip_id if trip.HasField("trip_id") else "N/A"
+                # Route and Direction parsed from trip_id for convenience
+                route_parsed, direction_parsed = parse_trip_id(trip_id) 
+                # Direct fields from TripDescriptor
+                route_id = trip.route_id if trip.HasField("route_id") else "Not Provided"
+                direction_id = trip.direction_id if trip.HasField("direction_id") else "Not Provided"
+                start_date = trip.start_date if trip.HasField("start_date") else "Not Provided"
+                start_time = trip.start_time if trip.HasField("start_time") else "Not Provided"
+                trip_schedule_relationship = trip.schedule_relationship if trip.HasField("schedule_relationship") else "Not Provided"
 
-        if entity.HasField("id"):
-            entity_id = entity.id
-        if entity.HasField("is_deleted"):
-            entity_is_deleted = entity.is_deleted
-
-        if entity.HasField('trip_update'):
-            trip_update = entity.trip_update
-            trip = trip_update.trip
-            vehicle = trip_update.vehicle
-
-            # TripDescriptor fields (from trip_update.trip)
-            trip_id = trip.trip_id if trip.HasField("trip_id") else "N/A"
-            # Route and Direction parsed from trip_id for convenience
-            route_parsed, direction_parsed = parse_trip_id(trip_id) 
-            # Direct fields from TripDescriptor
-            route_id = trip.route_id if trip.HasField("route_id") else "Not Provided"
-            direction_id = trip.direction_id if trip.HasField("direction_id") else "Not Provided"
-            start_date = trip.start_date if trip.HasField("start_date") else "Not Provided"
-            start_time = trip.start_time if trip.HasField("start_time") else "Not Provided"
-            trip_schedule_relationship = trip.schedule_relationship if trip.HasField("schedule_relationship") else "Not Provided"
-
-            # TripUpdate fields
-            trip_update_timestamp = trip_update.timestamp if trip_update.HasField("timestamp") else "Not Provided"
-            trip_delay = trip_update.delay if trip_update.HasField("delay") else "Not Provided"
-            
-            # VehicleDescriptor fields (from trip_update.vehicle)
-            vehicle_id = vehicle.id if vehicle.HasField("id") else "N/A"
-
-            for stop in trip_update.stop_time_update:
-                # StopTimeUpdate fields
-                stop_sequence = stop.stop_sequence if stop.HasField("stop_sequence") else "N/A"
-                stop_id = stop.stop_id if stop.HasField("stop_id") else "N/A"
-                stop_time_update_schedule_relationship = stop.schedule_relationship if stop.HasField("schedule_relationship") else "Not Provided"
-
-                # --- Arrival Time and Delay Calculation ---
-                arrival_time_unix = None
-                stop_arrival_delay = "Not Provided"
-                stop_arrival_uncertainty = "Not Provided"
-                if stop.HasField("arrival"):
-                    arrival_time_unix = stop.arrival.time if stop.arrival.HasField("time") else None
-                    
-                    if stop.arrival.HasField("delay"):
-                        stop_arrival_delay = stop.arrival.delay
-                    elif static_stop_times_df is not None and arrival_time_unix is not None:
-                        # Attempt to calculate delay using static schedule
-                        try:
-                            # Find the scheduled arrival time for this trip and stop
-                            # Ensure trip_id and stop_sequence match types in static_stop_times_df
-                            scheduled_row = static_stop_times_df[
-                                (static_stop_times_df['trip_id'] == trip_id) &
-                                (static_stop_times_df['stop_sequence'] == stop_sequence)
-                            ]
-                            if not scheduled_row.empty:
-                                scheduled_arrival_time_str = scheduled_row['arrival_time'].iloc[0]
-                                scheduled_arrival_seconds = time_string_to_seconds(scheduled_arrival_time_str)
-
-                                if scheduled_arrival_seconds is not None:
-                                    # Convert real-time Unix timestamp to seconds from midnight (local time)
-                                    realtime_dt_utc = datetime.datetime.fromtimestamp(arrival_time_unix, tz=datetime.timezone.utc)
-                                    realtime_dt_local = realtime_dt_utc + datetime.timedelta(hours=10) # Adjust to UTC+10
-                                    realtime_arrival_seconds = (realtime_dt_local.hour * 3600 + 
-                                                                realtime_dt_local.minute * 60 + 
-                                                                realtime_dt_local.second)
-                                    
-                                    stop_arrival_delay = realtime_arrival_seconds - scheduled_arrival_seconds
-                                else:
-                                    stop_arrival_delay = "Not Calculated (Invalid Scheduled Time Format)"
-                            else:
-                                stop_arrival_delay = "Not Calculated (Static Schedule Entry Not Found)"
-                        except Exception as e:
-                            stop_arrival_delay = f"Calculation Error: {e}"
-                    else:
-                        stop_arrival_delay = "Not Provided (Requires Static GTFS Data for Calculation)" 
-
-                    stop_arrival_uncertainty = stop.arrival.uncertainty if stop.arrival.HasField("uncertainty") else "Not Provided"
+                # TripUpdate fields
+                trip_update_timestamp = trip_update.timestamp if trip_update.HasField("timestamp") else "Not Provided"
+                trip_delay = trip_update.delay if trip_update.HasField("delay") else "Not Provided"
                 
-                # --- Departure Time and Delay Calculation ---
-                departure_time_unix = None
-                stop_departure_delay = "Not Provided"
-                stop_departure_uncertainty = "Not Provided"
-                if stop.HasField("departure"):
-                    departure_time_unix = stop.departure.time if stop.departure.HasField("time") else None
+                # VehicleDescriptor fields (from trip_update.vehicle)
+                vehicle_id = vehicle.id if vehicle.HasField("id") else "N/A"
+
+                for stop in trip_update.stop_time_update:
+                    # StopTimeUpdate fields
+                    stop_sequence = stop.stop_sequence if stop.HasField("stop_sequence") else "N/A"
+                    stop_id = stop.stop_id if stop.HasField("stop_id") else "N/A"
+                    stop_time_update_schedule_relationship = stop.schedule_relationship if stop.HasField("schedule_relationship") else "Not Provided"
+
+                    # StopTimeEvent - Arrival (from stop_time_update.arrival)
+                    arrival_time = "N/A"
+                    stop_arrival_delay = "Not Provided"
+                    stop_arrival_uncertainty = "Not Provided"
+                    if stop.HasField("arrival"):
+                        arrival_time = stop.arrival.time if stop.arrival.HasField("time") else "N/A"
+                        stop_arrival_delay = stop.arrival.delay if stop.arrival.HasField("delay") else "Not Provided"
+                        stop_arrival_uncertainty = stop.arrival.uncertainty if stop.arrival.HasField("uncertainty") else "Not Provided"
                     
-                    if stop.departure.HasField("delay"):
-                        stop_departure_delay = stop.departure.delay
-                    elif static_stop_times_df is not None and departure_time_unix is not None:
-                        # Attempt to calculate delay using static schedule
-                        try:
-                            scheduled_row = static_stop_times_df[
-                                (static_stop_times_df['trip_id'] == trip_id) &
-                                (static_stop_times_df['stop_sequence'] == stop_sequence)
-                            ]
-                            if not scheduled_row.empty:
-                                scheduled_departure_time_str = scheduled_row['departure_time'].iloc[0]
-                                scheduled_departure_seconds = time_string_to_seconds(scheduled_departure_time_str)
+                    # StopTimeEvent - Departure (from stop_time_update.departure)
+                    departure_time = "N/A"
+                    stop_departure_delay = "Not Provided"
+                    stop_departure_uncertainty = "Not Provided"
+                    if stop.HasField("departure"):
+                        departure_time = stop.departure.time if stop.departure.HasField("time") else "N/A"
+                        stop_departure_delay = stop.departure.delay if stop.departure.HasField("delay") else "Not Provided"
+                        stop_departure_uncertainty = stop.departure.uncertainty if stop.departure.HasField("uncertainty") else "Not Provided"
 
-                                if scheduled_departure_seconds is not None:
-                                    realtime_dt_utc = datetime.datetime.fromtimestamp(departure_time_unix, tz=datetime.timezone.utc)
-                                    realtime_dt_local = realtime_dt_utc + datetime.timedelta(hours=10) # Adjust to UTC+10
-                                    realtime_departure_seconds = (realtime_dt_local.hour * 3600 + 
-                                                                realtime_dt_local.minute * 60 + 
-                                                                realtime_dt_local.second)
-                                    
-                                    stop_departure_delay = realtime_departure_seconds - scheduled_departure_seconds
-                                else:
-                                    stop_departure_delay = "Not Calculated (Invalid Scheduled Time Format)"
-                            else:
-                                stop_departure_delay = "Not Calculated (Static Schedule Entry Not Found)"
-                        except Exception as e:
-                            stop_departure_delay = f"Calculation Error: {e}"
-                    else:
-                        stop_departure_delay = "Not Provided (Requires Static GTFS Data for Calculation)" 
+                    records.append({
+                        # Feed Header Fields
+                        "Feed GTFS Realtime Version": feed_header_version,
+                        "Feed Incrementality": feed_header_incrementality,
+                        "Feed Timestamp": convert_unix_to_time(feed_header_timestamp),
 
-                    stop_departure_uncertainty = stop.departure.uncertainty if stop.departure.HasField("uncertainty") else "Not Provided"
+                        # Entity Fields
+                        "Entity ID": entity_id,
+                        "Entity Is Deleted": entity_is_deleted,
 
-                records.append({
-                    "Feed GTFS Realtime Version": feed_header_version,
-                    "Feed Incrementality": feed_header_incrementality,
-                    "Feed Timestamp": convert_unix_to_time(feed_header_timestamp),
+                        # TripUpdate Fields
+                        "Trip Update Timestamp": convert_unix_to_time(trip_update_timestamp),
+                        "Trip Delay": trip_delay,
+                        "Vehicle ID": vehicle_id,
 
-                    "Entity ID": entity_id,
-                    "Entity Is Deleted": entity_is_deleted,
+                        # TripDescriptor Fields (from trip_update.trip)
+                        "Trip ID": trip_id,
+                        "Route (Parsed)": route_parsed, # Extracted by parsing the trip_id
+                        "Direction (Parsed)": direction_parsed, # Extracted by parsing the trip_id
+                        "Trip Route ID": route_id, # Directly from TripDescriptor
+                        "Trip Direction ID": direction_id, # Directly from TripDescriptor
+                        "Trip Start Date": start_date,
+                        "Trip Start Time": start_time,
+                        "Trip Schedule Relationship": trip_schedule_relationship,
 
-                    "Trip Update Timestamp": convert_unix_to_time(trip_update_timestamp),
-                    "Trip Delay": trip_delay,
-                    "Vehicle ID": vehicle_id,
+                        # StopTimeUpdate Fields (from trip_update.stop_time_update)
+                        "Stop ID": stop_id,
+                        "Stop Sequence": stop_sequence,
+                        "Stop Time Update Schedule Relationship": stop_time_update_schedule_relationship,
+                        
+                        # StopTimeEvent - Arrival (from stop_time_update.arrival)
+                        "Arrival Time": convert_unix_to_time(arrival_time),
+                        "Stop Arrival Delay": stop_arrival_delay,
+                        "Stop Arrival Uncertainty": stop_arrival_uncertainty,
 
-                    "Trip ID": trip_id,
-                    "Route (Parsed)": route_parsed, 
-                    "Direction (Parsed)": direction_parsed, 
-                    "Trip Route ID": route_id, 
-                    "Trip Direction ID": direction_id, 
-                    "Trip Start Date": start_date,
-                    "Trip Start Time": start_time,
-                    "Trip Schedule Relationship": trip_schedule_relationship,
+                        # StopTimeEvent - Departure (from stop_time_update.departure)
+                        "Departure Time": convert_unix_to_time(departure_time),
+                        "Stop Departure Delay": stop_departure_delay,
+                        "Stop Departure Uncertainty": stop_departure_uncertainty,
+                    })
+        return pd.DataFrame(records)
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching data from API: {e}")
+        return pd.DataFrame() # Return empty DataFrame on error
+    except Exception as e:
+        st.error(f"An unexpected error occurred during data processing: {e}")
+        return pd.DataFrame()
 
-                    "Stop ID": stop_id,
-                    "Stop Sequence": stop_sequence,
-                    "Stop Time Update Schedule Relationship": stop_time_update_schedule_relationship,
-                    
-                    "Arrival Time": convert_unix_to_time(arrival_time_unix), # Use the unix timestamp for conversion
-                    "Stop Arrival Delay": stop_arrival_delay,
-                    "Stop Arrival Uncertainty": stop_arrival_uncertainty,
+df = fetch_and_process_data()
 
-                    "Departure Time": convert_unix_to_time(departure_time_unix), # Use the unix timestamp for conversion
-                    "Stop Departure Delay": stop_departure_delay,
-                    "Stop Departure Uncertainty": stop_departure_uncertainty,
-                })
+# --- Streamlit App Logic ---
 
-    df = pd.DataFrame(records)
-    
-    # Filter for Route 903
-    df_903 = df[df['Route (Parsed)'] == '903'] # Changed to 'Route (Parsed)'
+if not df.empty:
+    # Adjusted to show current time in UTC+10
+    st.write(f"Data last updated: {datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=10))).strftime('%H:%M:%S')} (UTC+10)") 
 
-    if not df_903.empty: 
-        print(tabulate(df_903.head(), headers='keys', tablefmt='psql')) 
+    # --- Sidebar Filters ---
+    st.sidebar.header("🔍 Filter Trips")
+
+    ## 1. Default route filter is 903
+    all_routes = sorted(df["Route (Parsed)"].dropna().unique().tolist()) 
+    # Ensure '903' is in options, handle 'Unknown'
+    if "Unknown" in all_routes:
+        all_routes.remove("Unknown")
+    if '903' in all_routes:
+        default_route_index = all_routes.index('903')
     else:
-        print("No vehicle or trip updates currently available for Route 903.")
+        default_route_index = 0 
 
+    selected_route = st.sidebar.selectbox(
+        "Select Route",
+        options=all_routes,
+        index=default_route_index 
+    )
+
+    # Filter directions based on selected route (or all if 'All' route selected)
+    if selected_route == "All":
+        filtered_df_for_directions = df
+    else:
+        filtered_df_for_directions = df[df["Route (Parsed)"] == selected_route] 
+
+    ## 2. Allow "All" for all filters & 3. Default "All" for direction
+    all_directions = sorted(filtered_df_for_directions["Direction (Parsed)"].dropna().unique().tolist()) 
+    if "Unknown" in all_directions:
+        all_directions.remove("Unknown")
+    all_directions.insert(0, "All") 
+    
+    # Set default to 'All'
+    default_direction_index = all_directions.index("All") if "All" in all_directions else 0
+    selected_direction = st.sidebar.selectbox(
+        "Select Direction",
+        options=all_directions,
+        index=default_direction_index 
+    )
+
+    # Filter stop sequences based on selected route and direction
+    if selected_route == "All":
+        filtered_df_for_stops = df
+    else:
+        filtered_df_for_stops = df[df["Route (Parsed)"] == selected_route] 
+
+    if selected_direction != "All":
+        filtered_df_for_stops = filtered_df_for_stops[filtered_df_for_stops["Direction (Parsed)"] == selected_direction] 
+
+    ## 2. Allow "All" for all filters & 3. Default "All" for stop sequence
+    all_stops = filtered_df_for_stops["Stop Sequence"].dropna().unique().tolist()
+    
+    # Convert to numeric for sorting if possible, handling "N/A" and other non-numeric
+    numeric_stops = [s for s in all_stops if isinstance(s, (int, float)) and s != "N/A"]
+    non_numeric_stops = [s for s in all_stops if not isinstance(s, (int, float)) or s == "N/A"]
+    
+    all_stops_sorted = sorted(numeric_stops) + sorted(non_numeric_stops) 
+    all_stops_sorted.insert(0, "All") 
+
+    # Set default to 'All'
+    default_stop_index = all_stops_sorted.index("All") if "All" in all_stops_sorted else 0
+    selected_stop_seq = st.sidebar.selectbox(
+        "Select Stop Sequence",
+        options=all_stops_sorted,
+        index=default_stop_index 
+    )
+
+    # --- Apply Filters to DataFrame ---
+    st.subheader("🚏 Filtered Trip Data")
+
+    final_filtered_df = df.copy() 
+
+    if selected_route != "All":
+        final_filtered_df = final_filtered_df[final_filtered_df["Route (Parsed)"] == selected_route] 
+    
+    if selected_direction != "All":
+        final_filtered_df = final_filtered_df[final_filtered_df["Direction (Parsed)"] == selected_direction] 
+    
+    if selected_stop_seq != "All":
+        final_filtered_df = final_filtered_df[final_filtered_df["Stop Sequence"] == selected_stop_seq]
+
+
+    if not final_filtered_df.empty:
+        st.dataframe(final_filtered_df.reset_index(drop=True), use_container_width=True)
+    else:
+        st.warning("No matching records found for the selected filters.")
 else:
-    print(f"Failed to retrieve data: {response.status_code} - {response.text}")
+    st.info("No data available to display. Please check API connectivity or try again later.")
