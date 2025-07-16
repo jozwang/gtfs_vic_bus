@@ -7,11 +7,16 @@ import datetime
 # --- Utility Functions ---
 
 def convert_unix_to_time(unix_timestamp):
-    """Converts a Unix timestamp to HH:MM:SS format. Returns 'N/A' if invalid."""
+    """
+    Converts a Unix timestamp to HH:MM:SS format, adjusted for UTC+10.
+    Returns 'N/A' if invalid.
+    """
     if unix_timestamp is None or not isinstance(unix_timestamp, (int, float)):
         return "N/A"
     try:
-        return datetime.datetime.fromtimestamp(unix_timestamp).strftime('%H:%M:%S')
+        # Add 10 hours (10 * 3600 seconds) to the Unix timestamp for UTC+10
+        adjusted_timestamp = unix_timestamp + (10 * 3600)
+        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%M:%S')
     except (ValueError, TypeError):
         return "N/A"
 
@@ -172,61 +177,56 @@ df = fetch_and_process_data()
 # --- Streamlit App Logic ---
 
 if not df.empty:
-    st.write(f"Data last updated: {datetime.datetime.now().strftime('%H:%M:%S')}") # Show last update time
+    # Adjusted to show current time in UTC+10
+    st.write(f"Data last updated: {datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=10))).strftime('%H:%M:%S')} (UTC+10)") 
 
     # --- Sidebar Filters ---
     st.sidebar.header("🔍 Filter Trips")
 
     ## 1. Default route filter is 903
-    all_routes = sorted(df["Route (Parsed)"].dropna().unique().tolist()) # Corrected column name
+    all_routes = sorted(df["Route (Parsed)"].dropna().unique().tolist()) 
     # Ensure '903' is in options, handle 'Unknown'
     if "Unknown" in all_routes:
         all_routes.remove("Unknown")
     if '903' in all_routes:
         default_route_index = all_routes.index('903')
     else:
-        default_route_index = 0 # Fallback to first item if 903 not found
-
-    # Allow 'All' for all filters - add 'All' to the options list
-    # For Route, 'All' is optional based on whether you always want a default route
-    # If 'All' is desired for Route, uncomment the line below:
-    # all_routes.insert(0, "All")
-    # if '903' is not guaranteed, and you want 'All' to be default, set index to 0
+        default_route_index = 0 
 
     selected_route = st.sidebar.selectbox(
         "Select Route",
         options=all_routes,
-        index=default_route_index # Set default to '903'
+        index=default_route_index 
     )
 
     # Filter directions based on selected route (or all if 'All' route selected)
     if selected_route == "All":
         filtered_df_for_directions = df
     else:
-        filtered_df_for_directions = df[df["Route (Parsed)"] == selected_route] # Corrected column name
+        filtered_df_for_directions = df[df["Route (Parsed)"] == selected_route] 
 
     ## 2. Allow "All" for all filters & 3. Default "All" for direction
-    all_directions = sorted(filtered_df_for_directions["Direction (Parsed)"].dropna().unique().tolist()) # Corrected column name
+    all_directions = sorted(filtered_df_for_directions["Direction (Parsed)"].dropna().unique().tolist()) 
     if "Unknown" in all_directions:
         all_directions.remove("Unknown")
-    all_directions.insert(0, "All") # Add "All" option at the beginning
+    all_directions.insert(0, "All") 
     
     # Set default to 'All'
     default_direction_index = all_directions.index("All") if "All" in all_directions else 0
     selected_direction = st.sidebar.selectbox(
         "Select Direction",
         options=all_directions,
-        index=default_direction_index # Default to 'All'
+        index=default_direction_index 
     )
 
     # Filter stop sequences based on selected route and direction
     if selected_route == "All":
         filtered_df_for_stops = df
     else:
-        filtered_df_for_stops = df[df["Route (Parsed)"] == selected_route] # Corrected column name
+        filtered_df_for_stops = df[df["Route (Parsed)"] == selected_route] 
 
     if selected_direction != "All":
-        filtered_df_for_stops = filtered_df_for_stops[filtered_df_for_stops["Direction (Parsed)"] == selected_direction] # Corrected column name
+        filtered_df_for_stops = filtered_df_for_stops[filtered_df_for_stops["Direction (Parsed)"] == selected_direction] 
 
     ## 2. Allow "All" for all filters & 3. Default "All" for stop sequence
     all_stops = filtered_df_for_stops["Stop Sequence"].dropna().unique().tolist()
@@ -235,27 +235,27 @@ if not df.empty:
     numeric_stops = [s for s in all_stops if isinstance(s, (int, float)) and s != "N/A"]
     non_numeric_stops = [s for s in all_stops if not isinstance(s, (int, float)) or s == "N/A"]
     
-    all_stops_sorted = sorted(numeric_stops) + sorted(non_numeric_stops) # Sort numeric then non-numeric
-    all_stops_sorted.insert(0, "All") # Add "All" option at the beginning
+    all_stops_sorted = sorted(numeric_stops) + sorted(non_numeric_stops) 
+    all_stops_sorted.insert(0, "All") 
 
     # Set default to 'All'
     default_stop_index = all_stops_sorted.index("All") if "All" in all_stops_sorted else 0
     selected_stop_seq = st.sidebar.selectbox(
         "Select Stop Sequence",
         options=all_stops_sorted,
-        index=default_stop_index # Default to 'All'
+        index=default_stop_index 
     )
 
     # --- Apply Filters to DataFrame ---
     st.subheader("🚏 Filtered Trip Data")
 
-    final_filtered_df = df.copy() # Start with a copy of the full DataFrame
+    final_filtered_df = df.copy() 
 
     if selected_route != "All":
-        final_filtered_df = final_filtered_df[final_filtered_df["Route (Parsed)"] == selected_route] # Corrected column name
+        final_filtered_df = final_filtered_df[final_filtered_df["Route (Parsed)"] == selected_route] 
     
     if selected_direction != "All":
-        final_filtered_df = final_filtered_df[final_filtered_df["Direction (Parsed)"] == selected_direction] # Corrected column name
+        final_filtered_df = final_filtered_df[final_filtered_df["Direction (Parsed)"] == selected_direction] 
     
     if selected_stop_seq != "All":
         final_filtered_df = final_filtered_df[final_filtered_df["Stop Sequence"] == selected_stop_seq]
