@@ -29,6 +29,8 @@ def parse_trip_id(trip_id):
             direction_sub_parts = direction_match[1].split('-')
             if len(direction_sub_parts) > 0:
                 direction = direction_sub_parts[0]
+            else:
+                direction = "Unknown"
     except Exception:
         # Log the exception for debugging in a real application
         pass
@@ -59,30 +61,103 @@ def fetch_and_process_data():
         feed.ParseFromString(response.content)
 
         records = []
+        
+        # Extract Feed Header information once (these fields will be duplicated per row in the DataFrame)
+        feed_header_version = feed.header.gtfs_realtime_version if feed.header.HasField("gtfs_realtime_version") else "Not Provided"
+        feed_header_incrementality = feed.header.incrementality if feed.header.HasField("incrementality") else "Not Provided"
+        feed_header_timestamp = feed.header.timestamp if feed.header.HasField("timestamp") else "Not Provided"
+
         for entity in feed.entity:
-            if entity.HasField("trip_update"):
+            # Entity-level fields
+            entity_id = entity.id if entity.HasField("id") else "Not Provided"
+            entity_is_deleted = entity.is_deleted if entity.HasField("is_deleted") else "Not Provided"
+
+            if entity.HasField('trip_update'):
                 trip_update = entity.trip_update
                 trip = trip_update.trip
-                vehicle_id = trip_update.vehicle.id if trip_update.HasField("vehicle") and trip_update.vehicle.HasField("id") else "N/A"
-                route, direction = parse_trip_id(trip.trip_id)
+                vehicle = trip_update.vehicle
+
+                # TripDescriptor fields (from trip_update.trip)
+                trip_id = trip.trip_id if trip.HasField("trip_id") else "N/A"
+                # Route and Direction parsed from trip_id for convenience
+                route_parsed, direction_parsed = parse_trip_id(trip_id) 
+                # Direct fields from TripDescriptor
+                route_id = trip.route_id if trip.HasField("route_id") else "Not Provided"
+                direction_id = trip.direction_id if trip.HasField("direction_id") else "Not Provided"
+                start_date = trip.start_date if trip.HasField("start_date") else "Not Provided"
+                start_time = trip.start_time if trip.HasField("start_time") else "Not Provided"
+                trip_schedule_relationship = trip.schedule_relationship if trip.HasField("schedule_relationship") else "Not Provided"
+
+                # TripUpdate fields
+                trip_update_timestamp = trip_update.timestamp if trip_update.HasField("timestamp") else "Not Provided"
+                trip_delay = trip_update.delay if trip_update.HasField("delay") else "Not Provided"
+                
+                # VehicleDescriptor fields (from trip_update.vehicle)
+                vehicle_id = vehicle.id if vehicle.HasField("id") else "N/A"
 
                 for stop in trip_update.stop_time_update:
+                    # StopTimeUpdate fields
                     stop_sequence = stop.stop_sequence if stop.HasField("stop_sequence") else "N/A"
-                    arrival_time_unix = stop.arrival.time if stop.HasField("arrival") and stop.arrival.HasField("time") else None
-                    departure_time_unix = stop.departure.time if stop.HasField("departure") and stop.departure.HasField("time") else None
-                    arrival_delay = stop.arrival.delay if stop.HasField("arrival") and stop.arrival.HasField("delay") else "N/A"
+                    stop_id = stop.stop_id if stop.HasField("stop_id") else "N/A"
+                    stop_time_update_schedule_relationship = stop.schedule_relationship if stop.HasField("schedule_relationship") else "Not Provided"
+
+                    # StopTimeEvent - Arrival (from stop_time_update.arrival)
+                    arrival_time = "N/A"
+                    stop_arrival_delay = "Not Provided"
+                    stop_arrival_uncertainty = "Not Provided"
+                    if stop.HasField("arrival"):
+                        arrival_time = stop.arrival.time if stop.arrival.HasField("time") else "N/A"
+                        stop_arrival_delay = stop.arrival.delay if stop.arrival.HasField("delay") else "Not Provided"
+                        stop_arrival_uncertainty = stop.arrival.uncertainty if stop.arrival.HasField("uncertainty") else "Not Provided"
+                    
+                    # StopTimeEvent - Departure (from stop_time_update.departure)
+                    departure_time = "N/A"
+                    stop_departure_delay = "Not Provided"
+                    stop_departure_uncertainty = "Not Provided"
+                    if stop.HasField("departure"):
+                        departure_time = stop.departure.time if stop.departure.HasField("time") else "N/A"
+                        stop_departure_delay = stop.departure.delay if stop.departure.HasField("delay") else "Not Provided"
+                        stop_departure_uncertainty = stop.departure.uncertainty if stop.departure.HasField("uncertainty") else "Not Provided"
 
                     records.append({
+                        # Feed Header Fields
+                        "Feed GTFS Realtime Version": feed_header_version,
+                        "Feed Incrementality": feed_header_incrementality,
+                        "Feed Timestamp": convert_unix_to_time(feed_header_timestamp),
+
+                        # Entity Fields
+                        "Entity ID": entity_id,
+                        "Entity Is Deleted": entity_is_deleted,
+
+                        # TripUpdate Fields
+                        "Trip Update Timestamp": convert_unix_to_time(trip_update_timestamp),
+                        "Trip Delay": trip_delay,
                         "Vehicle ID": vehicle_id,
-                        "Trip ID": trip.trip_id,
-                        "Start Date": trip.start_date,
-                        "Start Time": trip.start_time,
-                        "Route": route,
-                        "Direction": direction,
+
+                        # TripDescriptor Fields (from trip_update.trip)
+                        "Trip ID": trip_id,
+                        "Route (Parsed)": route_parsed, # Extracted by parsing the trip_id
+                        "Direction (Parsed)": direction_parsed, # Extracted by parsing the trip_id
+                        "Trip Route ID": route_id, # Directly from TripDescriptor
+                        "Trip Direction ID": direction_id, # Directly from TripDescriptor
+                        "Trip Start Date": start_date,
+                        "Trip Start Time": start_time,
+                        "Trip Schedule Relationship": trip_schedule_relationship,
+
+                        # StopTimeUpdate Fields (from trip_update.stop_time_update)
+                        "Stop ID": stop_id,
                         "Stop Sequence": stop_sequence,
-                        "Stop Arrival Delay": arrival_delay,
-                        "Arrival Time": convert_unix_to_time(arrival_time_unix),
-                        "Departure Time": convert_unix_to_time(departure_time_unix)
+                        "Stop Time Update Schedule Relationship": stop_time_update_schedule_relationship,
+                        
+                        # StopTimeEvent - Arrival (from stop_time_update.arrival)
+                        "Arrival Time": convert_unix_to_time(arrival_time),
+                        "Stop Arrival Delay": stop_arrival_delay,
+                        "Stop Arrival Uncertainty": stop_arrival_uncertainty,
+
+                        # StopTimeEvent - Departure (from stop_time_update.departure)
+                        "Departure Time": convert_unix_to_time(departure_time),
+                        "Stop Departure Delay": stop_departure_delay,
+                        "Stop Departure Uncertainty": stop_departure_uncertainty,
                     })
         return pd.DataFrame(records)
     except requests.exceptions.RequestException as e:
@@ -103,7 +178,7 @@ if not df.empty:
     st.sidebar.header("🔍 Filter Trips")
 
     ## 1. Default route filter is 903
-    all_routes = sorted(df["Route"].dropna().unique().tolist())
+    all_routes = sorted(df["Route (Parsed)"].dropna().unique().tolist()) # Corrected column name
     # Ensure '903' is in options, handle 'Unknown'
     if "Unknown" in all_routes:
         all_routes.remove("Unknown")
@@ -128,10 +203,10 @@ if not df.empty:
     if selected_route == "All":
         filtered_df_for_directions = df
     else:
-        filtered_df_for_directions = df[df["Route"] == selected_route]
+        filtered_df_for_directions = df[df["Route (Parsed)"] == selected_route] # Corrected column name
 
     ## 2. Allow "All" for all filters & 3. Default "All" for direction
-    all_directions = sorted(filtered_df_for_directions["Direction"].dropna().unique().tolist())
+    all_directions = sorted(filtered_df_for_directions["Direction (Parsed)"].dropna().unique().tolist()) # Corrected column name
     if "Unknown" in all_directions:
         all_directions.remove("Unknown")
     all_directions.insert(0, "All") # Add "All" option at the beginning
@@ -148,10 +223,10 @@ if not df.empty:
     if selected_route == "All":
         filtered_df_for_stops = df
     else:
-        filtered_df_for_stops = df[df["Route"] == selected_route]
+        filtered_df_for_stops = df[df["Route (Parsed)"] == selected_route] # Corrected column name
 
     if selected_direction != "All":
-        filtered_df_for_stops = filtered_df_for_stops[filtered_df_for_stops["Direction"] == selected_direction]
+        filtered_df_for_stops = filtered_df_for_stops[filtered_df_for_stops["Direction (Parsed)"] == selected_direction] # Corrected column name
 
     ## 2. Allow "All" for all filters & 3. Default "All" for stop sequence
     all_stops = filtered_df_for_stops["Stop Sequence"].dropna().unique().tolist()
@@ -177,10 +252,10 @@ if not df.empty:
     final_filtered_df = df.copy() # Start with a copy of the full DataFrame
 
     if selected_route != "All":
-        final_filtered_df = final_filtered_df[final_filtered_df["Route"] == selected_route]
+        final_filtered_df = final_filtered_df[final_filtered_df["Route (Parsed)"] == selected_route] # Corrected column name
     
     if selected_direction != "All":
-        final_filtered_df = final_filtered_df[final_filtered_df["Direction"] == selected_direction]
+        final_filtered_df = final_filtered_df[final_filtered_df["Direction (Parsed)"] == selected_direction] # Corrected column name
     
     if selected_stop_seq != "All":
         final_filtered_df = final_filtered_df[final_filtered_df["Stop Sequence"] == selected_stop_seq]
