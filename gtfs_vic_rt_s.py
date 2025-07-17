@@ -16,7 +16,8 @@ def convert_unix_to_time(unix_timestamp):
     try:
         # Add 10 hours (10 * 3600 seconds) to the Unix timestamp for UTC+10
         adjusted_timestamp = unix_timestamp + (10 * 3600)
-        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%MM:%S')
+        # Corrected format: use %M for minutes, not %MM
+        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%M:%S')
     except (ValueError, TypeError):
         return "N/A"
 
