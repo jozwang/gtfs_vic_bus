@@ -49,12 +49,12 @@ st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
 col1, col2 = st.columns([5,5]) # Creates two columns with equal width (5/5 and 5/5)
 
 with col1:
-    st.title("🚍 PTV VIC Metro Bus Realtime Snapshot – Box Hill")
+    st.title("🚍 Metro Bus Realtime Snapshot – VIC")
 
 with col2:
     # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
     # Use use_container_width=True to make it fill its column, which is now half the page width
-    st.image("SkyBus Powerpoint Template.jpg", use_container_width=False, width=500)
+    st.image("SkyBus Powerpoint Template.jpg", use_container_width=True)
 
 # --- API Configuration ---
 
@@ -161,29 +161,31 @@ def fetch_and_process_data():
         # Convert 'Realtime Departure Time' to datetime.time objects for calculation
         merged_df['Realtime Departure Time Object'] = pd.to_datetime(merged_df['Realtime Departure Time'], format='%H:%M:%S', errors='coerce').dt.time
 
-        def calculate_minutes_difference(departure_time_obj, current_time_obj):
+        def calculate_minutes_difference(departure_time_obj, current_full_datetime):
             if pd.isna(departure_time_obj):
                 return None
             
-            dummy_date = datetime.date(now_utc10.year, now_utc10.month, now_utc10.day)
-            departure_datetime = datetime.datetime.combine(dummy_date, departure_time_obj)
-            current_datetime = datetime.datetime.combine(dummy_date, current_time_obj)
+            # Combine current date with departure time.
+            # Assume it's for today initially.
+            departure_datetime_today = datetime.datetime.combine(current_full_datetime.date(), departure_time_obj)
 
-            # Only calculate if departure is in the future
-            # If current time is past midnight and departure time is before,
-            # consider it for the next day to correctly calculate minutes difference.
-            if current_datetime > departure_datetime:
-                # Add a day to departure_datetime if it's earlier than current_datetime (e.g., crossing midnight)
-                if departure_datetime.hour < current_datetime.hour or \
-                   (departure_datetime.hour == current_datetime.hour and departure_datetime.minute < current_time_obj.minute): 
-                    departure_datetime += datetime.timedelta(days=1)
-                else:
-                    return None # If it's the same day and past, return None
+            # If the departure time is earlier than the current time, and it's not a service that would wrap around to the next day,
+            # then it has already departed.
+            # We explicitly check if it's past the current full datetime.
+            if departure_datetime_today < current_full_datetime:
+                # To handle services that run past midnight but conceptually for the "current day's operations"
+                # If departure time is e.g. 00:30 and current time is 23:00, it means it's tomorrow's 00:30.
+                # Only add a day if the time itself is earlier than current time AND current time is late in the day.
+                # A more robust check: If the departure time is significantly earlier than current time, it's likely next day's.
+                # For a simple "if current time is past, then null", we don't need the next day adjustment here.
+                # We simply return None if it's in the past relative to the current timestamp.
+                return None
             
-            diff = departure_datetime - current_datetime
+            diff = departure_datetime_today - current_full_datetime
             return diff.total_seconds() / 60
 
-        merged_df['Departure_in_Min'] = merged_df['Realtime Departure Time Object'].apply(lambda x: calculate_minutes_difference(x, now_utc10.time()))
+        # Pass the full now_utc10 datetime object to the function
+        merged_df['Departure_in_Min'] = merged_df['Realtime Departure Time Object'].apply(lambda x: calculate_minutes_difference(x, now_utc10))
         
         merged_df = merged_df.drop(columns=['Realtime Departure Time Object'])
 
