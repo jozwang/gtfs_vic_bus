@@ -16,7 +16,7 @@ def convert_unix_to_time(unix_timestamp):
     try:
         # Add 10 hours (10 * 3600 seconds) to the Unix timestamp for UTC+10
         adjusted_timestamp = unix_timestamp + (10 * 3600)
-        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%M:%S')
+        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%MM:%S')
     except (ValueError, TypeError):
         return "N/A"
 
@@ -171,7 +171,7 @@ def fetch_and_process_data():
         realtime_df = pd.DataFrame(records)
 
         # Fetch Static Stop Times Data
-        # Explicitly define dtypes for known columns to avoid inference issues, especially with 'trip_id'
+        # Read stop_lat and stop_lon as strings first to clean them
         static_stop_times_df = pd.read_csv(
             STATIC_STOP_TIMES_URL,
             dtype={
@@ -183,22 +183,22 @@ def fetch_and_process_data():
                 'trip_headsign': str,
                 'stop_name': str,
                 'stop_id': str,
-                'stop_lat': float,
-                'stop_lon': float,
-                'departure_time': str # Keep as string for now, will convert later
+                'stop_lat': str,  # Read as string initially
+                'stop_lon': str,  # Read as string initially
+                'departure_time': str 
             }
         )
         
+        # Clean 'stop_lat' and 'stop_lon' columns by removing any leading/trailing non-numeric characters (like quotes)
+        # and then convert to float. Using a regex to remove anything that's not a digit, a decimal point, or a minus sign.
+        static_stop_times_df['stop_lat'] = static_stop_times_df['stop_lat'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
+        static_stop_times_df['stop_lon'] = static_stop_times_df['stop_lon'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
+
         # Rename static columns to avoid conflicts and clarify origin
         static_stop_times_df = static_stop_times_df.rename(columns={
-            'arrival_time': 'Static Arrival Time', # This column might not be in your new CSV, but kept for robustness
             'departure_time': 'Static Departure Time',
             'stop_id': 'Static Stop ID',
             'stop_headsign': 'Static Stop Headsign',
-            'pickup_type': 'Static Pickup Type', # Might not be in your new CSV
-            'drop_off_type': 'Static Drop Off Type', # Might not be in your new CSV
-            'shape_dist_traveled': 'Static Shape Dist Traveled', # Might not be in your new CSV
-            'timepoint': 'Static Timepoint', # Might not be in your new CSV
             'route_id': 'Static Route ID',
             'direction_id': 'Static Direction ID',
             'service_id': 'Static Service ID',
@@ -229,6 +229,7 @@ def fetch_and_process_data():
             current_datetime = datetime.datetime.combine(dummy_date, current_time_obj)
 
             # If current time is past departure time, assume it's for the next day
+            # This handles cases where departure time is for early next morning (e.g., 00:05 and current time is 23:50)
             if current_datetime > departure_datetime:
                 departure_datetime += datetime.timedelta(days=1)
             
