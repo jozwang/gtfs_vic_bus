@@ -49,12 +49,12 @@ st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
 col1, col2 = st.columns([5,5]) # Creates two columns with equal width (5/5 and 5/5)
 
 with col1:
-    st.title("🚍 Metro Bus Realtime Snapshot – VIC")
+    st.title("🚍 PTV VIC Metro Bus Realtime Snapshot – Box Hill")
 
 with col2:
     # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
     # Use use_container_width=True to make it fill its column, which is now half the page width
-    st.image("SkyBus Powerpoint Template.jpg", use_container_width=True)
+    st.image("SkyBus Powerpoint Template.jpg", use_container_width=False, width=500)
 
 # --- API Configuration ---
 
