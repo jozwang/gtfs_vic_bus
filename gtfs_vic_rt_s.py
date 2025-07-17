@@ -162,27 +162,21 @@ def fetch_and_process_data():
         merged_df['Realtime Departure Time Object'] = pd.to_datetime(merged_df['Realtime Departure Time'], format='%H:%M:%S', errors='coerce').dt.time
 
         def calculate_minutes_difference(departure_time_obj, current_full_datetime):
-            if pd.isna(departure_time_obj):
-                return None
-            
-            # Combine current date with departure time.
-            # Assume it's for today initially.
-            departure_datetime_today = datetime.datetime.combine(current_full_datetime.date(), departure_time_obj)
-
-            # If the departure time is earlier than the current time, and it's not a service that would wrap around to the next day,
-            # then it has already departed.
-            # We explicitly check if it's past the current full datetime.
-            if departure_datetime_today < current_full_datetime:
-                # To handle services that run past midnight but conceptually for the "current day's operations"
-                # If departure time is e.g. 00:30 and current time is 23:00, it means it's tomorrow's 00:30.
-                # Only add a day if the time itself is earlier than current time AND current time is late in the day.
-                # A more robust check: If the departure time is significantly earlier than current time, it's likely next day's.
-                # For a simple "if current time is past, then null", we don't need the next day adjustment here.
-                # We simply return None if it's in the past relative to the current timestamp.
-                return None
-            
-            diff = departure_datetime_today - current_full_datetime
-            return diff.total_seconds() / 60
+                    if pd.isna(departure_time_obj):
+                        return None
+                    
+                    # Combine current date with departure time.
+                    # Make it timezone-aware using the same timezone as current_full_datetime
+                    departure_datetime_today = datetime.datetime.combine(
+                        current_full_datetime.date(), departure_time_obj, tzinfo=current_full_datetime.tzinfo
+                    )
+        
+                    # If the departure time is earlier than the current time, return None
+                    if departure_datetime_today < current_full_datetime:
+                        return None
+                    
+                    diff = departure_datetime_today - current_full_datetime
+                    return diff.total_seconds() / 60
 
         # Pass the full now_utc10 datetime object to the function
         merged_df['Departure_in_Min'] = merged_df['Realtime Departure Time Object'].apply(lambda x: calculate_minutes_difference(x, now_utc10))
