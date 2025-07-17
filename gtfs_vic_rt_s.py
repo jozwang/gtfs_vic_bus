@@ -195,18 +195,20 @@ def fetch_and_process_data():
         # Calculate Departure_in_Min
         now_utc10 = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=10)))
         
+        # Convert 'Realtime Departure Time' from 'HH:MM:SS' string to datetime.time objects
         merged_df['Realtime Departure Time Object'] = pd.to_datetime(merged_df['Realtime Departure Time'], format='%H:%M:%S', errors='coerce').dt.time
 
         def calculate_minutes_difference(departure_time_obj, current_time_obj):
             if pd.isna(departure_time_obj):
                 return None
             
-            dummy_date = datetime.date(2000, 1, 1) 
+            dummy_date = datetime.date(now_utc10.year, now_utc10.month, now_utc10.day) # Use today's date from now_utc10
             departure_datetime = datetime.datetime.combine(dummy_date, departure_time_obj)
             current_datetime = datetime.datetime.combine(dummy_date, current_time_obj)
 
+            # If current time is in the future of realtime departure time, return None
             if current_datetime > departure_datetime:
-                departure_datetime += datetime.timedelta(days=1)
+                return None
             
             diff = departure_datetime - current_datetime
             return diff.total_seconds() / 60
@@ -286,7 +288,7 @@ if not df.empty:
         "Entity ID",
         "trip_id",
         "Route (Parsed)",
-        "Direction (Parsed)", # Still show direction in table as per original request
+        "Direction (Parsed)", 
         "Trip Start Date",
         "Trip Start Time",
         "stop_sequence",
