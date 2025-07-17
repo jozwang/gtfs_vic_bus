@@ -236,21 +236,20 @@ if not df.empty:
     # Select and reorder columns for display
     display_columns = [
         "Feed Timestamp",
-        "Entity ID", # This column was previously commented out, but is kept if it's desired to show
+        # "Entity ID", # This column was previously commented out, but is kept if it's desired to show
         "trip_id",
         "Route (Parsed)",
-        "Direction (Parsed)", 
+        "Static Route ID",
+        "Static Direction ID",
+        "Trip Headsign",
         "Trip Start Date",
         "Trip Start Time",
         "stop_sequence",
+        "Static Stop Name",
         "Realtime Arrival Time",
         "Realtime Departure Time",
-        "Static Route ID",
-        "Static Direction ID",
-        "Static Service ID",
-        "Trip Headsign",
-        "Static Stop Name",
-        "Static Stop ID", # This column was previously commented out, but is kept if it's desired to show
+        # "Static Service ID",     
+        # "Static Stop ID", # This column was previously commented out, but is kept if it's desired to show
         "Static Departure Time",
         "Departure_in_Min"
     ]
