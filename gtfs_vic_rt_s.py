@@ -251,6 +251,7 @@ if not df.empty:
 
     # Assign the fully filtered temp_filtered_df to final_filtered_df
     final_filtered_df = temp_filtered_df.copy() 
+    final_filtered_df = final_filtered_df.sort_values(by="Realtime Departure Time", ascending=True)
 
     # Select and reorder columns for display
     display_columns = [
