@@ -239,7 +239,7 @@ if not df.empty:
         # "Entity ID", # This column was previously commented out, but is kept if it's desired to show
         "trip_id",
         "Route (Parsed)",
-        "Static Route ID",
+        # "Static Route ID",
         "Static Direction ID",
         "Trip Headsign",
         "Trip Start Date",
