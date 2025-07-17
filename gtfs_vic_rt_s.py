@@ -45,11 +45,16 @@ def parse_trip_id(trip_id):
 
 st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
 
-# --- Banner Image ---
-# Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
-st.image("SkyBus Powerpoint Template.jpg", use_container_width=False, width=1000)
+# Create two columns for the header section
+col1, col2 = st.columns([5,5]) # Creates two columns with equal width (5/5 and 5/5)
 
-st.title("🚍 Metro Bus Realtime Snapshot – VIC")
+with col1:
+    st.title("🚍 Metro Bus Realtime Snapshot – VIC")
+
+with col2:
+    # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
+    # Use use_container_width=True to make it fill its column, which is now half the page width
+    st.image("SkyBus Powerpoint Template.jpg", use_container_width=True)
 
 # --- API Configuration ---
 
@@ -170,7 +175,7 @@ def fetch_and_process_data():
             if current_datetime > departure_datetime:
                 # Add a day to departure_datetime if it's earlier than current_datetime (e.g., crossing midnight)
                 if departure_datetime.hour < current_datetime.hour or \
-                   (departure_datetime.hour == current_datetime.hour and departure_datetime.minute < current_datetime.minute):
+                   (departure_datetime.hour == current_datetime.hour and departure_datetime.minute < current_time_obj.minute): 
                     departure_datetime += datetime.timedelta(days=1)
                 else:
                     return None # If it's the same day and past, return None
