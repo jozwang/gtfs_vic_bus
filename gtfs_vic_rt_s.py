@@ -135,6 +135,8 @@ def fetch_and_process_data():
                 'stop_id': str,
                 'stop_lat': str, 
                 'stop_lon': str, 
+                'route_short_name': str,
+                'route_long_name': str,
                 'departure_time': str 
             }
         )
@@ -275,6 +277,7 @@ if not df.empty:
         "Feed Timestamp",
         # "trip_id",
         "Route (Parsed)",
+        "route_long_name",
         "Trip Headsign",
         "Static Direction ID",         
         # "Trip Start Date",
