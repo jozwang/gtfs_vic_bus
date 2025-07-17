@@ -49,7 +49,7 @@ st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
 col1, col2 = st.columns([5,5]) # Creates two columns with equal width (5/5 and 5/5)
 
 with col1:
-    st.title("🚍 Metro Bus Realtime Snapshot – VIC")
+    st.title("🚍 PTV Metro Bus Realtime Snapshot – Box Hill")
 
 with col2:
     # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
