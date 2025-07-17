@@ -16,7 +16,7 @@ def convert_unix_to_time(unix_timestamp):
     try:
         # Add 10 hours (10 * 3600 seconds) to the Unix timestamp for UTC+10
         adjusted_timestamp = unix_timestamp + (10 * 3600)
-        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%MM:%S')
+        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%M:%S')
     except (ValueError, TypeError):
         return "N/A"
 
@@ -130,48 +130,45 @@ def fetch_and_process_data():
 
                     records.append({
                         # Feed Header Fields
+                        "Feed Timestamp": convert_unix_to_time(feed_header_timestamp), # Moved up for selected columns
+                        "Entity ID": entity_id, # Moved up for selected columns
+
+                        # TripDescriptor Fields (from trip_update.trip)
+                        "trip_id": trip_id, 
+                        "Route (Parsed)": route_parsed, 
+                        "Direction (Parsed)": direction_parsed, 
+                        "Trip Start Date": start_date,
+                        "Trip Start Time": start_time,
+
+                        # StopTimeUpdate Fields (from trip_update.stop_time_update)
+                        "stop_sequence": stop_sequence,
+                        
+                        # StopTimeEvent - Arrival (from stop_time_update.arrival)
+                        "Realtime Arrival Time": convert_unix_to_time(arrival_time), 
+
+                        # StopTimeEvent - Departure (from stop_time_update.departure)
+                        "Realtime Departure Time": convert_unix_to_time(departure_time), 
+
+                        # All other fields from original processing that might be useful for joining or debugging, but not displayed by default
                         "Feed GTFS Realtime Version": feed_header_version,
                         "Feed Incrementality": feed_header_incrementality,
-                        "Feed Timestamp": convert_unix_to_time(feed_header_timestamp),
-
-                        # Entity Fields
-                        "Entity ID": entity_id,
                         "Entity Is Deleted": entity_is_deleted,
-
-                        # TripUpdate Fields
                         "Trip Update Timestamp": convert_unix_to_time(trip_update_timestamp),
                         "Trip Delay": trip_delay,
                         "Vehicle ID": vehicle_id,
-
-                        # TripDescriptor Fields (from trip_update.trip)
-                        "trip_id": trip_id, # Changed to lowercase for easier joining
-                        "Route (Parsed)": route_parsed, # Extracted by parsing the trip_id
-                        "Direction (Parsed)": direction_parsed, # Extracted by parsing the trip_id
-                        "Trip Route ID": route_id, # Directly from TripDescriptor
-                        "Trip Direction ID": direction_id, # Directly from TripDescriptor
-                        "Trip Start Date": start_date,
-                        "Trip Start Time": start_time,
+                        "Trip Route ID": route_id,
+                        "Trip Direction ID": direction_id,
                         "Trip Schedule Relationship": trip_schedule_relationship,
-
-                        # StopTimeUpdate Fields (from trip_update.stop_time_update)
                         "Stop ID": stop_id,
-                        "stop_sequence": stop_sequence, # Changed to lowercase for easier joining
                         "Stop Time Update Schedule Relationship": stop_time_update_schedule_relationship,
-                        
-                        # StopTimeEvent - Arrival (from stop_time_update.arrival)
-                        "Realtime Arrival Time": convert_unix_to_time(arrival_time), # Renamed for clarity
                         "Stop Arrival Delay": stop_arrival_delay,
                         "Stop Arrival Uncertainty": stop_arrival_uncertainty,
-
-                        # StopTimeEvent - Departure (from stop_time_update.departure)
-                        "Realtime Departure Time": convert_unix_to_time(departure_time), # Renamed for clarity
                         "Stop Departure Delay": stop_departure_delay,
                         "Stop Departure Uncertainty": stop_departure_uncertainty,
                     })
         realtime_df = pd.DataFrame(records)
 
         # Fetch Static Stop Times Data
-        # Read stop_lat and stop_lon as strings first to clean them
         static_stop_times_df = pd.read_csv(
             STATIC_STOP_TIMES_URL,
             dtype={
@@ -189,26 +186,25 @@ def fetch_and_process_data():
             }
         )
         
-        # Clean 'stop_lat' and 'stop_lon' columns by removing any leading/trailing non-numeric characters (like quotes)
-        # and then convert to float. Using a regex to remove anything that's not a digit, a decimal point, or a minus sign.
+        # Clean 'stop_lat' and 'stop_lon' columns
         static_stop_times_df['stop_lat'] = static_stop_times_df['stop_lat'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
         static_stop_times_df['stop_lon'] = static_stop_times_df['stop_lon'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
 
         # Rename static columns to avoid conflicts and clarify origin
         static_stop_times_df = static_stop_times_df.rename(columns={
-            'departure_time': 'Static Departure Time',
-            'stop_id': 'Static Stop ID',
-            'stop_headsign': 'Static Stop Headsign',
             'route_id': 'Static Route ID',
             'direction_id': 'Static Direction ID',
             'service_id': 'Static Service ID',
+            'trip_headsign': 'Trip Headsign',
             'stop_name': 'Static Stop Name',
+            'stop_id': 'Static Stop ID',
+            'departure_time': 'Static Departure Time',
             'stop_lat': 'Static Stop Lat',
             'stop_lon': 'Static Stop Lon'
         })
         
         # Ensure 'stop_sequence' in realtime_df is integer for proper joining
-        realtime_df['stop_sequence'] = pd.to_numeric(realtime_df['stop_sequence'], errors='coerce').fillna(-1).astype(int) # Use -1 for N/A sequences
+        realtime_df['stop_sequence'] = pd.to_numeric(realtime_df['stop_sequence'], errors='coerce').fillna(-1).astype(int) 
 
         # Inner Join static_df with realtime_df on 'trip_id' and 'stop_sequence'
         merged_df = pd.merge(realtime_df, static_stop_times_df, on=['trip_id', 'stop_sequence'], how='inner')
@@ -224,12 +220,11 @@ def fetch_and_process_data():
                 return None
             
             # Create dummy dates for calculation, just focusing on time difference
-            dummy_date = datetime.date(2000, 1, 1) # A common arbitrary date
+            dummy_date = datetime.date(2000, 1, 1) 
             departure_datetime = datetime.datetime.combine(dummy_date, departure_time_obj)
             current_datetime = datetime.datetime.combine(dummy_date, current_time_obj)
 
             # If current time is past departure time, assume it's for the next day
-            # This handles cases where departure time is for early next morning (e.g., 00:05 and current time is 23:50)
             if current_datetime > departure_datetime:
                 departure_datetime += datetime.timedelta(days=1)
             
@@ -244,7 +239,7 @@ def fetch_and_process_data():
         return merged_df
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching data from API: {e}")
-        return pd.DataFrame() # Return empty DataFrame on error
+        return pd.DataFrame() 
     except Exception as e:
         st.error(f"An unexpected error occurred during data processing: {e}")
         return pd.DataFrame()
@@ -262,7 +257,6 @@ if not df.empty:
 
     ## 1. Default route filter is 903
     all_routes = sorted(df["Route (Parsed)"].dropna().unique().tolist()) 
-    # Ensure '903' is in options, handle 'Unknown'
     if "Unknown" in all_routes:
         all_routes.remove("Unknown")
     if '903' in all_routes:
@@ -276,7 +270,7 @@ if not df.empty:
         index=default_route_index 
     )
 
-    # Filter directions based on selected route (or all if 'All' route selected)
+    # Filter directions based on selected route
     if selected_route == "All":
         filtered_df_for_directions = df
     else:
@@ -306,9 +300,35 @@ if not df.empty:
     
     if selected_direction != "All":
         final_filtered_df = final_filtered_df[final_filtered_df["Direction (Parsed)"] == selected_direction] 
-    
+
+    # Select and reorder columns for display
+    display_columns = [
+        "Feed Timestamp",
+        "Entity ID",
+        "trip_id",
+        "Route (Parsed)",
+        "Direction (Parsed)",
+        "Trip Start Date",
+        "Trip Start Time",
+        "stop_sequence",
+        "Realtime Arrival Time",
+        "Realtime Departure Time",
+        "Static Route ID",
+        "Static Direction ID",
+        "Static Service ID",
+        "Trip Headsign",
+        "Static Stop Name",
+        "Static Stop ID",
+        "Static Departure Time",
+        "Departure_in_Min"
+    ]
+
+    # Ensure all display_columns exist in the DataFrame before selecting
+    # This prevents errors if a column is missing due to data issues or API changes
+    existing_display_columns = [col for col in display_columns if col in final_filtered_df.columns]
+
     if not final_filtered_df.empty:
-        st.dataframe(final_filtered_df.reset_index(drop=True), use_container_width=True)
+        st.dataframe(final_filtered_df[existing_display_columns].reset_index(drop=True), use_container_width=True)
     else:
         st.warning("No matching records found for the selected filters.")
 else:
