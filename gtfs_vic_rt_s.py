@@ -288,7 +288,7 @@ if not df.empty:
         "Entity ID",
         "trip_id",
         "Route (Parsed)",
-        "Direction (Parsed)", 
+        # "Direction (Parsed)", 
         "Trip Start Date",
         "Trip Start Time",
         "stop_sequence",
