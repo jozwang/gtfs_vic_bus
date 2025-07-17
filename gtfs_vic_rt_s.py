@@ -54,7 +54,7 @@ with col1:
 with col2:
     # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
     # Use use_container_width=True to make it fill its column, which is now half the page width
-    st.image("SkyBus Powerpoint Template.jpg", use_container_width=True)
+    st.image("SkyBus Powerpoint Template.jpg", use_container_width=false, width=300)
 
 # --- API Configuration ---
 
