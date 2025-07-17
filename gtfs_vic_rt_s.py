@@ -16,7 +16,7 @@ def convert_unix_to_time(unix_timestamp):
     try:
         # Add 10 hours (10 * 3600 seconds) to the Unix timestamp for UTC+10
         adjusted_timestamp = unix_timestamp + (10 * 3600)
-        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%M:%S')
+        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%MM:%S')
     except (ValueError, TypeError):
         return "N/A"
 
@@ -190,17 +190,23 @@ if not df.empty:
     # --- Sidebar Filters ---
     st.sidebar.header("🔍 Filter Trips")
 
+    # Initialize a temporary filtered DataFrame for cascading filters
+    temp_filtered_df = df.copy()
+
     # 1. Stop Name Filter
-    all_stop_names = sorted(df["Static Stop Name"].dropna().unique().tolist())
+    all_stop_names = sorted(temp_filtered_df["Static Stop Name"].dropna().unique().tolist())
     all_stop_names.insert(0, "All")
     selected_stop_name = st.sidebar.selectbox(
         "Stop Name",
         options=all_stop_names,
         index=0
     )
+    if selected_stop_name != "All":
+        temp_filtered_df = temp_filtered_df[temp_filtered_df["Static Stop Name"] == selected_stop_name]
 
-    # 2. Route Filter (Default to All)
-    all_routes = sorted(df["Route (Parsed)"].dropna().unique().tolist()) 
+
+    # 2. Route Filter (cascading from Stop Name)
+    all_routes = sorted(temp_filtered_df["Route (Parsed)"].dropna().unique().tolist()) 
     if "Unknown" in all_routes:
         all_routes.remove("Unknown")
     all_routes.insert(0, "All")
@@ -212,43 +218,57 @@ if not df.empty:
         options=all_routes,
         index=default_route_index 
     )
+    if selected_route != "All":
+        temp_filtered_df = temp_filtered_df[temp_filtered_df["Route (Parsed)"] == selected_route]
 
-    # 3. Trip Headsign Filter
-    all_headsigns = sorted(df["Trip Headsign"].dropna().unique().tolist())
+
+    # 3. Trip Headsign Filter (cascading from Stop Name and Route)
+    all_headsigns = sorted(temp_filtered_df["Trip Headsign"].dropna().unique().tolist())
     all_headsigns.insert(0, "All")
     selected_headsign = st.sidebar.selectbox(
         "Select Trip Headsign",
         options=all_headsigns,
         index=0
     )
+    if selected_headsign != "All":
+        temp_filtered_df = temp_filtered_df[temp_filtered_df["Trip Headsign"] == selected_headsign]
+
+    # 4. Static Direction ID Filter (cascading from Stop Name, Route, and Trip Headsign)
+    all_directions = sorted(temp_filtered_df["Static Direction ID"].dropna().unique().tolist())
+    all_directions.insert(0, "All")
+    selected_direction_id = st.sidebar.selectbox(
+        "Select Direction ID",
+        options=all_directions,
+        index=0
+    )
+    if selected_direction_id != "All":
+        temp_filtered_df = temp_filtered_df[temp_filtered_df["Static Direction ID"] == selected_direction_id]
+
 
     # --- Apply Filters to DataFrame ---
     st.subheader("🚏 Filtered Trip Data")
 
-    final_filtered_df = df.copy() 
-
-    if selected_stop_name != "All":
-        final_filtered_df = final_filtered_df[final_filtered_df["Static Stop Name"] == selected_stop_name]
-
-    if selected_route != "All":
-        final_filtered_df = final_filtered_df[final_filtered_df["Route (Parsed)"] == selected_route] 
-    
-    if selected_headsign != "All":
-        final_filtered_df = final_filtered_df[final_filtered_df["Trip Headsign"] == selected_headsign]
+    # Assign the fully filtered temp_filtered_df to final_filtered_df
+    final_filtered_df = temp_filtered_df.copy() 
 
     # Select and reorder columns for display
     display_columns = [
         "Feed Timestamp",
+        "Entity ID", 
         "trip_id",
-        "Static Direction ID",
         "Route (Parsed)",
-        "Trip Headsign",
+        "Direction (Parsed)", 
         "Trip Start Date",
         "Trip Start Time",
-        "Static Stop Name", 
         "stop_sequence",
         "Realtime Arrival Time",
-        "Realtime Departure Time",        
+        "Realtime Departure Time",
+        "Static Route ID",
+        "Static Direction ID",
+        "Static Service ID",
+        "Trip Headsign",
+        "Static Stop Name",
+        "Static Stop ID", 
         "Static Departure Time",
         "Departure_in_Min"
     ]
@@ -261,3 +281,4 @@ if not df.empty:
         st.warning("No matching records found for the selected filters.")
 else:
     st.info("No data available to display. Please check API connectivity or try again later.")
+    
