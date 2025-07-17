@@ -128,11 +128,9 @@ def fetch_and_process_data():
             }
         )
         
-        # Clean 'stop_lat' and 'stop_lon' columns (still needed for potential map features or future use)
         static_stop_times_df['stop_lat'] = static_stop_times_df['stop_lat'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
         static_stop_times_df['stop_lon'] = static_stop_times_df['stop_lon'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
 
-        # Only rename columns that are actually used in the merged DF or for display/filtering
         static_stop_times_df = static_stop_times_df.rename(columns={
             'route_id': 'Static Route ID',
             'direction_id': 'Static Direction ID',
@@ -177,9 +175,14 @@ def fetch_and_process_data():
         st.error(f"An unexpected error occurred during data processing: {e}")
         return pd.DataFrame()
 
-df = fetch_and_process_data()
-
 # --- Streamlit App Logic ---
+
+# Add a refresh button to clear the cache and re-run the script
+if st.button("Refresh Data"):
+    st.cache_data.clear()
+    st.rerun() # Rerun the script to re-fetch data
+
+df = fetch_and_process_data()
 
 if not df.empty:
     st.write(f"Data last updated: {datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=10))).strftime('%H:%M:%S')} (UTC+10)") 
@@ -236,20 +239,16 @@ if not df.empty:
     # Select and reorder columns for display
     display_columns = [
         "Feed Timestamp",
-        # "Entity ID", # This column was previously commented out, but is kept if it's desired to show
         "trip_id",
-        "Route (Parsed)",
-        # "Static Route ID",
         "Static Direction ID",
+        "Route (Parsed)",
         "Trip Headsign",
         "Trip Start Date",
         "Trip Start Time",
+        "Static Stop Name", 
         "stop_sequence",
-        "Static Stop Name",
         "Realtime Arrival Time",
-        "Realtime Departure Time",
-        # "Static Service ID",     
-        # "Static Stop ID", # This column was previously commented out, but is kept if it's desired to show
+        "Realtime Departure Time",        
         "Static Departure Time",
         "Departure_in_Min"
     ]
