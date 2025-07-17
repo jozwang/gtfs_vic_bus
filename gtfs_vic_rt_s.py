@@ -49,11 +49,10 @@ st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
 col1, col2 = st.columns([5,5]) # Creates two columns with equal width (5/5 and 5/5)
 
 with col1:
-    st.title("🚍 PTV Metro Bus Realtime Snapshot – Box Hill")
+    st.title("🚍 Metro Bus Realtime Snapshot – VIC")
 
 with col2:
     # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
-    # Use use_container_width=True to make it fill its column, which is now half the page width
     st.image("SkyBus Powerpoint Template.jpg", use_container_width=False, width=300)
 
 # --- API Configuration ---
@@ -135,8 +134,6 @@ def fetch_and_process_data():
                 'stop_id': str,
                 'stop_lat': str, 
                 'stop_lon': str, 
-                'route_short_name': str,
-                'route_long_name': str,
                 'departure_time': str 
             }
         )
@@ -164,21 +161,21 @@ def fetch_and_process_data():
         merged_df['Realtime Departure Time Object'] = pd.to_datetime(merged_df['Realtime Departure Time'], format='%H:%M:%S', errors='coerce').dt.time
 
         def calculate_minutes_difference(departure_time_obj, current_full_datetime):
-                    if pd.isna(departure_time_obj):
-                        return None
-                    
-                    # Combine current date with departure time.
-                    # Make it timezone-aware using the same timezone as current_full_datetime
-                    departure_datetime_today = datetime.datetime.combine(
-                        current_full_datetime.date(), departure_time_obj, tzinfo=current_full_datetime.tzinfo
-                    )
-        
-                    # If the departure time is earlier than the current time, return None
-                    if departure_datetime_today < current_full_datetime:
-                        return None
-                    
-                    diff = departure_datetime_today - current_full_datetime
-                    return diff.total_seconds() / 60
+            if pd.isna(departure_time_obj):
+                return None
+            
+            # Combine current date with departure time.
+            # Make it timezone-aware using the same timezone as current_full_datetime
+            departure_datetime_today = datetime.datetime.combine(
+                current_full_datetime.date(), departure_time_obj, tzinfo=current_full_datetime.tzinfo
+            )
+
+            # If the departure time is earlier than the current time, return None
+            if departure_datetime_today < current_full_datetime:
+                return None
+            
+            diff = departure_datetime_today - current_full_datetime
+            return diff.total_seconds() / 60
 
         # Pass the full now_utc10 datetime object to the function
         merged_df['Departure_in_Min'] = merged_df['Realtime Departure Time Object'].apply(lambda x: calculate_minutes_difference(x, now_utc10))
@@ -269,32 +266,68 @@ if not df.empty:
     # Assign the fully filtered temp_filtered_df to final_filtered_df
     final_filtered_df = temp_filtered_df.copy() 
 
+    # Filter out rows where Departure_in_Min is None (i.e., bus has already departed)
+    final_filtered_df = final_filtered_df.dropna(subset=['Departure_in_Min'])
+    # Ensure Departure_in_Min is an integer for display
+    final_filtered_df['Departure_in_Min'] = final_filtered_df['Departure_in_Min'].astype(int)
+
     # Sort the DataFrame by "Route (Parsed)" then "Realtime Departure Time" in ascending order
     final_filtered_df = final_filtered_df.sort_values(by=["Route (Parsed)", "Realtime Departure Time"], ascending=[True, True])
 
-    # Select and reorder columns for display
-    display_columns = [
-        "Feed Timestamp",
-        # "trip_id",
-        "Route (Parsed)",
-        "route_long_name",
-        "Trip Headsign",
-        "Static Direction ID",         
-        # "Trip Start Date",
-        # "Trip Start Time",
-        "stop_sequence",
-        "Static Stop Name",
-        "Realtime Arrival Time",
-        "Realtime Departure Time",
-        "Static Departure Time",
-        "Departure_in_Min"
-    ]
-
-    existing_display_columns = [col for col in display_columns if col in final_filtered_df.columns]
-
     if not final_filtered_df.empty:
-        # Increased height for the table to show more rows
-        st.dataframe(final_filtered_df[existing_display_columns].reset_index(drop=True), use_container_width=True, height=800)
+        # Group by 'Trip Headsign' (or 'Direction (Parsed)' if more suitable) for PID-like display
+        # We'll use 'Trip Headsign' as it's more user-friendly for a PID.
+        grouped_trips = final_filtered_df.groupby('Trip Headsign')
+
+        for headsign, group in grouped_trips:
+            st.markdown(f"### Towards {headsign}") # Display the heading for the group
+
+            # Sort within each group by Realtime Departure Time for accurate display
+            group_sorted = group.sort_values(by="Realtime Departure Time", ascending=True)
+
+            for index, row in group_sorted.iterrows():
+                # Create columns for each piece of information
+                col_route, col_destination, col_scheduled, col_realtime = st.columns([1, 4, 2, 2]) # Adjust ratios as needed
+
+                with col_route:
+                    # Styling for route number like a badge
+                    st.markdown(
+                        f"""
+                        <div style="
+                            background-color: #f0f2f6; 
+                            border-radius: 5px; 
+                            padding: 8px 12px; 
+                            text-align: center; 
+                            font-weight: bold; 
+                            font-size: 1.1em; 
+                            color: #31333F;
+                            margin-top: 5px;
+                        ">
+                            {row['Route (Parsed)']}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+
+                with col_destination:
+                    st.write(f"**To {row['Trip Headsign']}**")
+                    st.markdown(f"<small>Scheduled: {row['Static Departure Time']}</small>", unsafe_allow_html=True)
+                
+                with col_scheduled:
+                    # Display the Scheduled time
+                    st.write("") # Placeholder to align
+                    st.write(f"**{row['Realtime Departure Time']}**") # Display realtime as the main time
+                
+                with col_realtime:
+                    # Display Realtime Departure in minutes, similar to the example image
+                    # Consider using st.metric for this to get the badge-like appearance
+                    mins_away = row['Departure_in_Min']
+                    if pd.notna(mins_away):
+                        st.metric(label=" ", value=f"{mins_away} mins", delta=None) # Delta can be used if comparing to scheduled
+                    else:
+                        st.write("Departed") # Or some other indicator if it's already gone (though we filter these out)
+                st.markdown("---") # Separator between trips
+
     else:
         st.warning("No matching records found for the selected filters.")
 else:
