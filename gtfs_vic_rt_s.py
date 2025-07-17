@@ -47,7 +47,7 @@ st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
 
 # --- Banner Image ---
 # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
-st.image("SkyBus Powerpoint Template.jpg", use_column_width=True)
+st.image("SkyBus Powerpoint Template.jpg", use_container_width=False, width=1000)
 
 st.title("🚍 Metro Bus Realtime Snapshot – VIC")
 
