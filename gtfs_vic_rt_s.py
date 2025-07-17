@@ -44,6 +44,11 @@ def parse_trip_id(trip_id):
 # --- Streamlit Application Setup ---
 
 st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
+
+# --- Banner Image ---
+# Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
+st.image("SkyBus Powerpoint Template.jpg", use_column_width=True)
+
 st.title("🚍 Metro Bus Realtime Snapshot – VIC")
 
 # --- API Configuration ---
@@ -123,8 +128,8 @@ def fetch_and_process_data():
                 'trip_headsign': str,
                 'stop_name': str,
                 'stop_id': str,
-                'stop_lat': str,  
-                'stop_lon': str,  
+                'stop_lat': str, 
+                'stop_lon': str, 
                 'departure_time': str 
             }
         )
@@ -148,6 +153,7 @@ def fetch_and_process_data():
 
         now_utc10 = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=10)))
         
+        # Convert 'Realtime Departure Time' to datetime.time objects for calculation
         merged_df['Realtime Departure Time Object'] = pd.to_datetime(merged_df['Realtime Departure Time'], format='%H:%M:%S', errors='coerce').dt.time
 
         def calculate_minutes_difference(departure_time_obj, current_time_obj):
@@ -158,8 +164,16 @@ def fetch_and_process_data():
             departure_datetime = datetime.datetime.combine(dummy_date, departure_time_obj)
             current_datetime = datetime.datetime.combine(dummy_date, current_time_obj)
 
+            # Only calculate if departure is in the future
+            # If current time is past midnight and departure time is before,
+            # consider it for the next day to correctly calculate minutes difference.
             if current_datetime > departure_datetime:
-                return None
+                # Add a day to departure_datetime if it's earlier than current_datetime (e.g., crossing midnight)
+                if departure_datetime.hour < current_datetime.hour or \
+                   (departure_datetime.hour == current_datetime.hour and departure_datetime.minute < current_datetime.minute):
+                    departure_datetime += datetime.timedelta(days=1)
+                else:
+                    return None # If it's the same day and past, return None
             
             diff = departure_datetime - current_datetime
             return diff.total_seconds() / 60
@@ -251,6 +265,8 @@ if not df.empty:
 
     # Assign the fully filtered temp_filtered_df to final_filtered_df
     final_filtered_df = temp_filtered_df.copy() 
+
+    # Sort the DataFrame by "Route (Parsed)" then "Realtime Departure Time" in ascending order
     final_filtered_df = final_filtered_df.sort_values(by=["Route (Parsed)", "Realtime Departure Time"], ascending=[True, True])
 
     # Select and reorder columns for display
@@ -259,7 +275,7 @@ if not df.empty:
         # "trip_id",
         "Route (Parsed)",
         "Trip Headsign",
-        "Static Direction ID",        
+        "Static Direction ID",         
         "Trip Start Date",
         "Trip Start Time",
         "stop_sequence",
@@ -273,9 +289,9 @@ if not df.empty:
     existing_display_columns = [col for col in display_columns if col in final_filtered_df.columns]
 
     if not final_filtered_df.empty:
+        # Increased height for the table to show more rows
         st.dataframe(final_filtered_df[existing_display_columns].reset_index(drop=True), use_container_width=True, height=800)
     else:
         st.warning("No matching records found for the selected filters.")
 else:
     st.info("No data available to display. Please check API connectivity or try again later.")
-    
