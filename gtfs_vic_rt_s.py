@@ -271,7 +271,7 @@ if not df.empty:
     existing_display_columns = [col for col in display_columns if col in final_filtered_df.columns]
 
     if not final_filtered_df.empty:
-        st.dataframe(final_filtered_df[existing_display_columns].reset_index(drop=True), use_container_width=True)
+        st.dataframe(final_filtered_df[existing_display_columns].reset_index(drop=True), use_container_width=True, height=800)
     else:
         st.warning("No matching records found for the selected filters.")
 else:
