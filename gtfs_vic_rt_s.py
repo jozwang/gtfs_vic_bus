@@ -271,12 +271,11 @@ if not df.empty:
     # Ensure Departure_in_Min is an integer for display
     final_filtered_df['Departure_in_Min'] = final_filtered_df['Departure_in_Min'].astype(int)
 
-    # Sort the DataFrame by "Route (Parsed)" then "Realtime Departure Time" in ascending order
-    final_filtered_df = final_filtered_df.sort_values(by=["Route (Parsed)", "Realtime Departure Time"], ascending=[True, True])
+    # Sort the DataFrame by "Trip Headsign" then "Realtime Departure Time" for better grouping and ordering
+    final_filtered_df = final_filtered_df.sort_values(by=["Trip Headsign", "Realtime Departure Time"], ascending=[True, True])
 
     if not final_filtered_df.empty:
-        # Group by 'Trip Headsign' (or 'Direction (Parsed)' if more suitable) for PID-like display
-        # We'll use 'Trip Headsign' as it's more user-friendly for a PID.
+        # Group by 'Trip Headsign' for PID-like display
         grouped_trips = final_filtered_df.groupby('Trip Headsign')
 
         for headsign, group in grouped_trips:
@@ -286,49 +285,71 @@ if not df.empty:
             group_sorted = group.sort_values(by="Realtime Departure Time", ascending=True)
 
             for index, row in group_sorted.iterrows():
-                # Create columns for each piece of information
-                col_route, col_destination, col_scheduled, col_realtime = st.columns([1, 4, 2, 2]) # Adjust ratios as needed
+                # Use st.container() for each trip entry to visually group elements
+                with st.container(border=True): # Adds a subtle border around each trip entry
+                    # Create columns for each piece of information
+                    # Adjust ratios to give more space to destination and less to route number/time
+                    col_route, col_destination, col_scheduled_time, col_estimated_time, col_mins_away = st.columns([1, 3, 1.5, 1.5, 1.5]) 
 
-                with col_route:
-                    # Styling for route number like a badge
-                    st.markdown(
-                        f"""
-                        <div style="
-                            background-color: #f0f2f6; 
-                            border-radius: 5px; 
-                            padding: 8px 12px; 
-                            text-align: center; 
-                            font-weight: bold; 
-                            font-size: 1.1em; 
-                            color: #31333F;
-                            margin-top: 5px;
-                        ">
-                            {row['Route (Parsed)']}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
+                    with col_route:
+                        # Styling for route number like a badge
+                        st.markdown(
+                            f"""
+                            <div style="
+                                background-color: #f0f2f6; 
+                                border-radius: 5px; 
+                                padding: 8px 12px; 
+                                text-align: center; 
+                                font-weight: bold; 
+                                font-size: 1.1em; 
+                                color: #31333F;
+                                margin-top: 5px;
+                            ">
+                                {row['Route (Parsed)']}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
 
-                with col_destination:
-                    st.write(f"**To {row['Trip Headsign']}**")
-                    st.markdown(f"<small>Scheduled: {row['Static Departure Time']}</small>", unsafe_allow_html=True)
-                
-                with col_scheduled:
-                    # Display the Scheduled time
-                    st.write("") # Placeholder to align
-                    st.write(f"**{row['Realtime Departure Time']}**") # Display realtime as the main time
-                
-                with col_realtime:
-                    # Display Realtime Departure in minutes, similar to the example image
-                    # Consider using st.metric for this to get the badge-like appearance
-                    mins_away = row['Departure_in_Min']
-                    if pd.notna(mins_away):
-                        st.metric(label=" ", value=f"{mins_away} mins", delta=None) # Delta can be used if comparing to scheduled
-                    else:
-                        st.write("Departed") # Or some other indicator if it's already gone (though we filter these out)
-                st.markdown("---") # Separator between trips
+                    with col_destination:
+                        st.write(f"**To {row['Trip Headsign']}**")
+                        # st.markdown(f"<small>Scheduled: {row['Static Departure Time']}</small>", unsafe_allow_html=True)
+                    
+                    with col_scheduled_time:
+                        st.markdown(f"<small>Scheduled:</small>", unsafe_allow_html=True)
+                        st.write(f"**{row['Static Departure Time']}**")
+                    
+                    with col_estimated_time:
+                        st.markdown(f"<small>Estimated Departure:</small>", unsafe_allow_html=True)
+                        st.write(f"**{row['Realtime Departure Time']}**") # Display realtime as the main time
+                    
+                    with col_mins_away:
+                        mins_away = row['Departure_in_Min']
+                        if pd.notna(mins_away):
+                            # Dotted border box for "Departure in Min"
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    border: 2px dotted #888888; 
+                                    border-radius: 5px; 
+                                    padding: 8px 12px; 
+                                    text-align: center; 
+                                    font-weight: bold; 
+                                    font-size: 1.1em; 
+                                    color: #31333F;
+                                    margin-top: 5px;
+                                ">
+                                    {mins_away} mins
+                                </div>
+                                """,
+                                unsafe_allow_html=True
+                            )
+                        else:
+                            st.write("Departed") # This case should be rare due to dropna, but good for robustness
+                # No horizontal rule if using st.container(border=True)
+                # st.markdown("---") # Separator between trips
 
     else:
-        st.warning("No matching records found for the selected filters.")
+        st.warning("No matching records found for the selected filters. Please try adjusting the filters or refreshing the data.")
 else:
     st.info("No data available to display. Please check API connectivity or try again later.")
