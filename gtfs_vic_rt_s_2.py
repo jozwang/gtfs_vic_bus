@@ -69,7 +69,7 @@ def fetch_and_process_data():
         # 3. Filter calendar_dates.txt to current date and exception_type '1' (service added)
         calendar_dates_df = calendar_dates_df[
             (calendar_dates_df['date'] == current_date_yyyymmdd) & 
-            (calendar_dates_df['exception_type'] == '1')
+            (calendar_dates_df['exception_type'] == '2')
         ]
         
         if calendar_dates_df.empty:
