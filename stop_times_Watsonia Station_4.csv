@@ -1,0 +1,272 @@
+﻿trip_id,stop_sequence,route_id,route_short_name,route_long_name,direction_id,service_id,trip_headsign,stop_name,stop_id,stop_lat,stop_lon,departure_time
+42-514--1-MF2-101,51,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,06:15:00
+42-514--1-MF2-102,22,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,05:45:00
+42-514--1-MF2-11,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,07:14:00
+42-514--1-MF2-34,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,07:45:00
+42-514--1-MF2-35,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,08:15:00
+42-514--1-MF2-36,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,08:45:00
+42-514--1-MF2-37,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,09:13:00
+42-514--1-MF2-38,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,09:58:00
+42-514--1-MF2-39,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,10:38:00
+42-514--1-MF2-40,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,11:18:00
+42-514--1-MF2-41,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,11:58:00
+42-514--1-MF2-42,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,12:38:00
+42-514--1-MF2-43,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,13:20:00
+42-514--1-MF2-44,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,14:00:00
+42-514--1-MF2-45,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,14:40:00
+42-514--1-MF2-46,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,15:15:00
+42-514--1-MF2-47,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,15:45:00
+42-514--1-MF2-48,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,16:45:00
+42-514--1-MF2-49,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,17:15:00
+42-514--1-MF2-50,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,17:45:00
+42-514--1-MF2-51,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,18:15:00
+42-514--1-MF2-52,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,19:07:00
+42-514--1-MF2-53,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,18:45:00
+42-514--1-MF2-54,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,19:38:00
+42-514--1-MF2-55,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,19:25:00
+42-514--1-MF2-56,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,20:15:00
+42-514--1-MF2-57,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,19:45:00
+42-514--1-MF2-58,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,20:55:00
+42-514--1-MF2-59,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,20:45:00
+42-514--1-MF2-60,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,21:39:00
+42-514--1-MF2-61,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,21:45:00
+42-514--1-MF2-62,13,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,16:15:00
+42-514--1-MF2-7,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,06:11:00
+42-514--1-MF2-77,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,06:45:00
+42-514--1-MF2-78,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,07:15:00
+42-514--1-MF2-79,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,07:45:00
+42-514--1-MF2-80,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,08:15:00
+42-514--1-MF2-81,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,08:45:00
+42-514--1-MF2-82,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,09:15:00
+42-514--1-MF2-83,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,09:43:00
+42-514--1-MF2-84,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,10:23:00
+42-514--1-MF2-85,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,11:03:00
+42-514--1-MF2-86,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,11:43:00
+42-514--1-MF2-87,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,12:23:00
+42-514--1-MF2-88,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,13:03:00
+42-514--1-MF2-89,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,13:43:00
+42-514--1-MF2-9,31,42-514-aus-1,514,Glenroy - Eltham,1,MF2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,06:45:00
+42-514--1-MF2-90,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,14:23:00
+42-514--1-MF2-91,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,15:03:00
+42-514--1-MF2-92,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,15:35:00
+42-514--1-MF2-93,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,16:12:00
+42-514--1-MF2-94,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,16:40:00
+42-514--1-MF2-95,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,17:09:00
+42-514--1-MF2-96,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,17:40:00
+42-514--1-MF2-97,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,18:10:00
+42-514--1-MF2-98,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,18:40:00
+42-514--1-MF2-99,78,42-514-aus-1,514,Glenroy - Eltham,0,MF2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,22:39:00
+42-514--1-Sat2-1,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,07:40:00
+42-514--1-Sat2-100,40,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,06:38:00
+42-514--1-Sat2-23,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,07:58:00
+42-514--1-Sat2-24,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,09:15:00
+42-514--1-Sat2-25,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,10:35:00
+42-514--1-Sat2-26,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,11:55:00
+42-514--1-Sat2-27,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,13:15:00
+42-514--1-Sat2-28,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,14:35:00
+42-514--1-Sat2-29,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,15:55:00
+42-514--1-Sat2-30,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,17:15:00
+42-514--1-Sat2-31,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,18:35:00
+42-514--1-Sat2-32,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,19:55:00
+42-514--1-Sat2-33,31,42-514-aus-1,514,Glenroy - Eltham,1,Sat2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,21:09:00
+42-514--1-Sat2-67,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,09:00:00
+42-514--1-Sat2-68,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,10:20:00
+42-514--1-Sat2-69,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,11:40:00
+42-514--1-Sat2-70,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,13:00:00
+42-514--1-Sat2-71,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,14:20:00
+42-514--1-Sat2-72,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,15:51:00
+42-514--1-Sat2-73,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,17:11:00
+42-514--1-Sat2-74,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,18:31:00
+42-514--1-Sat2-75,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,19:51:00
+42-514--1-Sat2-76,78,42-514-aus-1,514,Glenroy - Eltham,0,Sat2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,21:04:00
+42-514--1-Sun2-10,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,19:36:00
+42-514--1-Sun2-12,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,07:43:00
+42-514--1-Sun2-13,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,09:00:00
+42-514--1-Sun2-14,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,10:20:00
+42-514--1-Sun2-15,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,11:40:00
+42-514--1-Sun2-16,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,13:00:00
+42-514--1-Sun2-17,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,14:20:00
+42-514--1-Sun2-18,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,15:50:00
+42-514--1-Sun2-19,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,17:10:00
+42-514--1-Sun2-2,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,09:00:00
+42-514--1-Sun2-20,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,18:30:00
+42-514--1-Sun2-21,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,19:55:00
+42-514--1-Sun2-22,31,42-514-aus-1,514,Glenroy - Eltham,1,Sun2-42-514-aus,Eltham,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,21:00:00
+42-514--1-Sun2-3,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,10:20:00
+42-514--1-Sun2-4,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,11:40:00
+42-514--1-Sun2-5,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,13:00:00
+42-514--1-Sun2-6,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,14:20:00
+42-514--1-Sun2-63,14,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,07:50:00
+42-514--1-Sun2-64,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,15:36:00
+42-514--1-Sun2-65,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,18:16:00
+42-514--1-Sun2-66,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,21:04:00
+42-514--1-Sun2-8,78,42-514-aus-1,514,Glenroy - Eltham,0,Sun2-42-514-aus,Glenroy,Watsonia Station/Greensborough Hwy,20668,'-37.71090063,145.08414652,16:56:00
+42-566--1-MF2-129,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,07:10:00
+42-566--1-MF2-130,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,07:35:00
+42-566--1-MF2-131,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,08:00:00
+42-566--1-MF2-132,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,08:28:00
+42-566--1-MF2-133,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,08:57:00
+42-566--1-MF2-134,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,09:20:00
+42-566--1-MF2-135,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,09:41:00
+42-566--1-MF2-136,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,10:02:00
+42-566--1-MF2-137,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,10:31:00
+42-566--1-MF2-138,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,10:57:00
+42-566--1-MF2-139,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,11:21:00
+42-566--1-MF2-140,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,11:42:00
+42-566--1-MF2-141,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,12:01:00
+42-566--1-MF2-142,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,12:30:00
+42-566--1-MF2-143,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,12:56:00
+42-566--1-MF2-144,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,13:20:00
+42-566--1-MF2-145,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,13:39:00
+42-566--1-MF2-146,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,14:03:00
+42-566--1-MF2-147,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,14:23:00
+42-566--1-MF2-148,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,14:45:00
+42-566--1-MF2-149,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,15:10:00
+42-566--1-MF2-150,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,15:34:00
+42-566--1-MF2-151,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,15:59:00
+42-566--1-MF2-152,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,16:24:00
+42-566--1-MF2-153,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,16:49:00
+42-566--1-MF2-154,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,17:14:00
+42-566--1-MF2-168,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,17:39:00
+42-566--1-MF2-169,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,18:04:00
+42-566--1-MF2-170,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,18:29:00
+42-566--1-MF2-171,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,18:54:00
+42-566--1-MF2-172,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,19:19:00
+42-566--1-MF2-173,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,19:44:00
+42-566--1-MF2-174,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,20:09:00
+42-566--1-MF2-175,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,20:32:00
+42-566--1-MF2-176,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,21:11:00
+42-566--1-MF2-177,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,21:53:00
+42-566--1-MF2-178,44,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,22:31:00
+42-566--1-MF2-179,17,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,05:56:00
+42-566--1-MF2-180,17,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,06:20:00
+42-566--1-MF2-27,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,06:25:00
+42-566--1-MF2-28,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,06:50:00
+42-566--1-MF2-29,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,17:48:00
+42-566--1-MF2-3,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,07:15:00
+42-566--1-MF2-30,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,18:13:00
+42-566--1-MF2-31,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,18:36:00
+42-566--1-MF2-32,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,18:57:00
+42-566--1-MF2-33,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,19:19:00
+42-566--1-MF2-34,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,19:38:00
+42-566--1-MF2-35,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,19:58:00
+42-566--1-MF2-36,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,20:23:00
+42-566--1-MF2-37,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,20:49:00
+42-566--1-MF2-38,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,21:29:00
+42-566--1-MF2-4,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,07:40:00
+42-566--1-MF2-5,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,08:05:00
+42-566--1-MF2-6,55,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,08:30:00
+42-566--1-MF2-60,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,08:55:00
+42-566--1-MF2-61,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,09:20:00
+42-566--1-MF2-62,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,09:45:00
+42-566--1-MF2-63,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,10:05:00
+42-566--1-MF2-64,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,10:30:00
+42-566--1-MF2-65,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,10:55:00
+42-566--1-MF2-66,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,11:20:00
+42-566--1-MF2-67,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,11:44:00
+42-566--1-MF2-68,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,12:05:00
+42-566--1-MF2-69,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,12:30:00
+42-566--1-MF2-70,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,12:55:00
+42-566--1-MF2-71,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,13:20:00
+42-566--1-MF2-72,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,13:42:00
+42-566--1-MF2-73,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,14:05:00
+42-566--1-MF2-74,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,14:30:00
+42-566--1-MF2-75,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,14:55:00
+42-566--1-MF2-76,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,15:20:00
+42-566--1-MF2-77,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,15:40:00
+42-566--1-MF2-78,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,16:10:00
+42-566--1-MF2-79,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,16:38:00
+42-566--1-MF2-80,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,17:01:00
+42-566--1-MF2-81,60,42-566-aus-1,566,Lalor - Northland SC,1,MF2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,17:24:00
+42-566--1-MF2-98,17,42-566-aus-1,566,Lalor - Northland SC,0,MF2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,06:45:00
+42-566--1-Sat2-114,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,07:59:00
+42-566--1-Sat2-115,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,08:35:00
+42-566--1-Sat2-116,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,09:15:00
+42-566--1-Sat2-117,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,09:55:00
+42-566--1-Sat2-118,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,10:33:00
+42-566--1-Sat2-119,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,11:13:00
+42-566--1-Sat2-120,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,11:52:00
+42-566--1-Sat2-121,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,12:32:00
+42-566--1-Sat2-122,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,13:12:00
+42-566--1-Sat2-123,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,13:57:00
+42-566--1-Sat2-124,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,14:34:00
+42-566--1-Sat2-125,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,15:14:00
+42-566--1-Sat2-126,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,15:54:00
+42-566--1-Sat2-127,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,16:34:00
+42-566--1-Sat2-128,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,17:14:00
+42-566--1-Sat2-161,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,17:54:00
+42-566--1-Sat2-162,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,18:34:00
+42-566--1-Sat2-163,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,19:14:00
+42-566--1-Sat2-164,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,19:54:00
+42-566--1-Sat2-165,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,20:34:00
+42-566--1-Sat2-166,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,21:07:00
+42-566--1-Sat2-167,44,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,22:01:00
+42-566--1-Sat2-22,55,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,07:05:00
+42-566--1-Sat2-23,55,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,07:45:00
+42-566--1-Sat2-24,55,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,19:50:00
+42-566--1-Sat2-25,55,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,20:30:00
+42-566--1-Sat2-26,55,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,21:10:00
+42-566--1-Sat2-43,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,08:22:00
+42-566--1-Sat2-44,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,09:05:00
+42-566--1-Sat2-45,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,09:45:00
+42-566--1-Sat2-46,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,10:25:00
+42-566--1-Sat2-47,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,11:05:00
+42-566--1-Sat2-48,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,11:45:00
+42-566--1-Sat2-49,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,12:25:00
+42-566--1-Sat2-50,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,13:05:00
+42-566--1-Sat2-51,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,13:45:00
+42-566--1-Sat2-52,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,14:25:00
+42-566--1-Sat2-53,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,15:05:00
+42-566--1-Sat2-54,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,15:50:00
+42-566--1-Sat2-55,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,16:34:00
+42-566--1-Sat2-56,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,17:14:00
+42-566--1-Sat2-57,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,17:54:00
+42-566--1-Sat2-58,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,18:34:00
+42-566--1-Sat2-59,60,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,19:13:00
+42-566--1-Sat2-84,55,42-566-aus-1,566,Lalor - Northland SC,1,Sat2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,21:40:00
+42-566--1-Sat2-97,17,42-566-aus-1,566,Lalor - Northland SC,0,Sat2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,07:21:00
+42-566--1-Sun2-1,55,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,07:05:00
+42-566--1-Sun2-10,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,13:05:00
+42-566--1-Sun2-100,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,08:35:00
+42-566--1-Sun2-101,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,09:15:00
+42-566--1-Sun2-102,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,09:55:00
+42-566--1-Sun2-103,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,10:33:00
+42-566--1-Sun2-104,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,11:13:00
+42-566--1-Sun2-105,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,11:52:00
+42-566--1-Sun2-106,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,12:32:00
+42-566--1-Sun2-107,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,13:12:00
+42-566--1-Sun2-108,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,13:57:00
+42-566--1-Sun2-109,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,14:34:00
+42-566--1-Sun2-11,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,13:45:00
+42-566--1-Sun2-110,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,15:14:00
+42-566--1-Sun2-111,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,15:54:00
+42-566--1-Sun2-112,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,16:34:00
+42-566--1-Sun2-113,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,17:14:00
+42-566--1-Sun2-12,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,14:25:00
+42-566--1-Sun2-13,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,15:05:00
+42-566--1-Sun2-14,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,15:50:00
+42-566--1-Sun2-15,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,16:34:00
+42-566--1-Sun2-155,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,17:54:00
+42-566--1-Sun2-156,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,18:34:00
+42-566--1-Sun2-157,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,19:14:00
+42-566--1-Sun2-158,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,19:54:00
+42-566--1-Sun2-159,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,20:34:00
+42-566--1-Sun2-16,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,17:14:00
+42-566--1-Sun2-160,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,21:31:00
+42-566--1-Sun2-17,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,17:54:00
+42-566--1-Sun2-18,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,18:34:00
+42-566--1-Sun2-19,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,19:13:00
+42-566--1-Sun2-2,55,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,07:45:00
+42-566--1-Sun2-20,55,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,19:50:00
+42-566--1-Sun2-21,55,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,20:30:00
+42-566--1-Sun2-39,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,08:22:00
+42-566--1-Sun2-40,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,09:04:00
+42-566--1-Sun2-41,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,09:45:00
+42-566--1-Sun2-42,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,10:25:00
+42-566--1-Sun2-7,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,11:05:00
+42-566--1-Sun2-8,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,11:45:00
+42-566--1-Sun2-82,55,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,20:54:00
+42-566--1-Sun2-83,55,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,21:40:00
+42-566--1-Sun2-9,60,42-566-aus-1,566,Lalor - Northland SC,1,Sun2-42-566-aus,Northland SC,Watsonia Station/Morwell Ave,2722,'-37.71010413,145.08227263,12:25:00
+42-566--1-Sun2-96,17,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,07:21:00
+42-566--1-Sun2-99,44,42-566-aus-1,566,Lalor - Northland SC,0,Sun2-42-566-aus,Lalor,Watsonia Station/Grace St,201,'-37.71030213,145.08225618,07:59:00
