@@ -3,43 +3,28 @@ import streamlit as st
 import pandas as pd
 from google.transit import gtfs_realtime_pb2
 import datetime
+import pytz # Import pytz for timezone handling
+import numpy as np # Import numpy for NaN
 
 # --- Utility Functions ---
 
 def convert_unix_to_time(unix_timestamp):
     """
     Converts a Unix timestamp to HH:MM:SS format, adjusted for UTC+10.
-    Returns 'N/A' if invalid.
+    Returns 'N/A' if invalid or None.
     """
     if unix_timestamp is None or not isinstance(unix_timestamp, (int, float)):
         return "N/A"
     try:
-        # Add 10 hours (10 * 3600 seconds) to the Unix timestamp for UTC+10
-        adjusted_timestamp = unix_timestamp + (10 * 3600)
-        # Corrected format: use %M for minutes, not %MM
-        return datetime.datetime.fromtimestamp(adjusted_timestamp, tz=datetime.timezone.utc).strftime('%H:%M:%S')
+        # Define the UTC+10 timezone
+        melbourne_tz = pytz.timezone('Australia/Melbourne')
+        # Convert Unix timestamp to datetime object in UTC
+        utc_dt = datetime.datetime.fromtimestamp(unix_timestamp, tz=pytz.utc)
+        # Convert UTC datetime to Melbourne timezone
+        melbourne_dt = utc_dt.astimezone(melbourne_tz)
+        return melbourne_dt.strftime('%H:%M:%S')
     except (ValueError, TypeError):
         return "N/A"
-
-def parse_trip_id(trip_id):
-    """Extracts Route and Direction from a PTV GTFS Realtime trip_id."""
-    route, direction = "Unknown", "Unknown"
-    try:
-        parts = trip_id.split('-')
-        if len(parts) > 1:
-            route = parts[1]
-
-        # More robust direction parsing
-        direction_match = trip_id.split('--')
-        if len(direction_match) > 1:
-            direction_sub_parts = direction_match[1].split('-')
-            if len(direction_sub_parts) > 0:
-                direction = direction_sub_parts[0]
-            else:
-                direction = "Unknown"
-    except Exception:
-        pass
-    return route, direction
 
 # --- Streamlit Application Setup ---
 
@@ -49,7 +34,7 @@ st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
 col1, col2 = st.columns([5,5]) # Creates two columns with equal width (5/5 and 5/5)
 
 with col1:
-    st.title("🚍 PTV Metro Bus Realtime Snapshot – Box Hill")
+    st.title("🚍 PTV Metro Bus Realtime Snapshot – Box Hill") # Title remains Watsonia as per previous request
 
 with col2:
     # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
@@ -57,13 +42,15 @@ with col2:
 
 # --- API Configuration ---
 
-api_key=st.secrets['API_key']
+api_key = st.secrets['API_key']
 base_url = "https://data-exchange-api.vicroads.vic.gov.au/opendata/v1/gtfsr/metrobus-tripupdates"
 headers = {"Ocp-Apim-Subscription-Key": api_key}
 params = {"subscription-key": api_key}
 
-# Updated static stop times URL
+# Updated static URLs - Reverted to Box Hill stop times
 STATIC_STOP_TIMES_URL = "https://raw.githubusercontent.com/jozwang/gtfs_vic_bus/refs/heads/main/stop_times_box_hill_4.csv"
+CALENDAR_DATES_URL = "https://raw.githubusercontent.com/jozwang/gtfs_vic_bus/refs/heads/main/calendar_dates.txt"
+
 
 # --- Data Fetching and Processing ---
 
@@ -71,6 +58,101 @@ STATIC_STOP_TIMES_URL = "https://raw.githubusercontent.com/jozwang/gtfs_vic_bus/
 def fetch_and_process_data():
     """Fetches data from the GTFS Realtime API, static stop times, and processes it into a merged DataFrame."""
     try:
+        # 1. Check current date in UTC+10 and get in yyyyMMdd format
+        melbourne_tz = pytz.timezone('Australia/Melbourne')
+        now_utc10 = datetime.datetime.now(melbourne_tz)
+        current_date_yyyymmdd = now_utc10.strftime('%Y%m%d')
+        current_time_hhmmss = now_utc10.strftime('%H:%M:%S')
+
+        # 2. Read calendar_dates.txt
+        calendar_dates_df = pd.read_csv(CALENDAR_DATES_URL, dtype={'service_id': str, 'date': str, 'exception_type': str})
+        
+        # 3. Filter calendar_dates.txt to current date (exception_type filter removed)
+        calendar_dates_df = calendar_dates_df[
+            (calendar_dates_df['date'] == current_date_yyyymmdd) 
+        ]
+        
+        if calendar_dates_df.empty:
+            st.warning(f"No service found for today ({current_date_yyyymmdd}) in calendar_dates.txt.")
+            return pd.DataFrame()
+
+        # Fetch Static Stop Times Data
+        static_stop_times_df = pd.read_csv(
+            STATIC_STOP_TIMES_URL,
+            dtype={
+                'trip_id': str,
+                'stop_sequence': int,
+                'route_id': str,
+                'direction_id': str,
+                'service_id': str,
+                'trip_headsign': str,
+                'stop_name': str,
+                'stop_id': str,
+                'stop_lat': str, 
+                'stop_lon': str, 
+                'departure_time': str,
+                'route_short_name': str # This column needs to be present in 'stop_times_box_hill_4.csv' for this to work
+            }
+        )
+        
+        static_stop_times_df['stop_lat'] = static_stop_times_df['stop_lat'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
+        static_stop_times_df['stop_lon'] = static_stop_times_df['stop_lon'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
+
+        static_stop_times_df = static_stop_times_df.rename(columns={
+            'route_id': 'Static Route ID', # Keep original route_id for reference if needed
+            'direction_id': 'Static Direction ID',
+            'service_id': 'Static Service ID',
+            'trip_headsign': 'Trip Headsign',
+            'stop_name': 'Static Stop Name',
+            'stop_id': 'Static Stop ID',
+            'departure_time': 'Static Departure Time',
+            'route_short_name': 'Display Route Name' # Rename for display clarity
+        })
+        
+        # 4. Inner join static_stop_times_df to calendar_dates_df
+        # This filters stop_times to only include services active today
+        static_stop_times_df = pd.merge(
+            static_stop_times_df,
+            calendar_dates_df[['service_id']], # Only need service_id for the join
+            left_on='Static Service ID',
+            right_on='service_id',
+            how='inner'
+        )
+        # Drop the redundant 'service_id' column from the merge
+        static_stop_times_df = static_stop_times_df.drop(columns=['service_id'])
+
+        # 6. Remove rows in stop_times df if static stop departure time is 4 hours before or after current time.
+        # Convert 'Static Departure Time' to datetime.time objects for comparison
+        
+        # Create a dummy date to combine with time for comparisons
+        today_date = now_utc10.date()
+
+        def parse_static_time_and_compare(time_str, current_full_datetime, window_hours=4):
+            if not isinstance(time_str, str): # Handle potential non-string values
+                return False
+            try:
+                # Combine static time with today's date and the correct timezone
+                static_dt = datetime.datetime.combine(
+                    today_date,
+                    datetime.datetime.strptime(time_str, '%H:%M:%S').time(),
+                    tzinfo=melbourne_tz # Ensure timezone awareness
+                )
+                
+                time_difference = abs((static_dt - current_full_datetime).total_seconds() / 3600) # in hours
+                return time_difference <= window_hours
+            except ValueError: # Catch errors from strptime if format is unexpected
+                return False
+
+        static_stop_times_df = static_stop_times_df[
+            static_stop_times_df['Static Departure Time'].apply(
+                lambda x: parse_static_time_and_compare(x, now_utc10)
+            )
+        ]
+
+        if static_stop_times_df.empty:
+            st.warning("No static trips found for the current date and time window after filtering.")
+            return pd.DataFrame()
+            
         # Fetch Realtime Data
         response = requests.get(base_url, headers=headers, params=params, timeout=10)
         response.raise_for_status()
@@ -91,27 +173,24 @@ def fetch_and_process_data():
 
             # TripDescriptor fields
             trip_id = trip.trip_id if trip.HasField("trip_id") else "N/A"
-            route_parsed, direction_parsed = parse_trip_id(trip_id)
             start_date = trip.start_date if trip.HasField("start_date") else "Not Provided"
             start_time = trip.start_time if trip.HasField("start_time") else "Not Provided"
             
             for stop in trip_update.stop_time_update:
                 stop_sequence = stop.stop_sequence if stop.HasField("stop_sequence") else "N/A"
                 
-                arrival_time = "N/A"
+                arrival_time = None # Initialize as None
                 if stop.HasField("arrival"):
-                    arrival_time = stop.arrival.time if stop.arrival.HasField("time") else "N/A"
+                    arrival_time = stop.arrival.time if stop.arrival.HasField("time") else None
                 
-                departure_time = "N/A"
+                departure_time = None # Initialize as None
                 if stop.HasField("departure"):
-                    departure_time = stop.departure.time if stop.departure.HasField("time") else "N/A"
+                    departure_time = stop.departure.time if stop.departure.HasField("time") else None
 
                 records.append({
                     "Feed Timestamp": convert_unix_to_time(feed_header_timestamp), 
                     "Entity ID": entity.id, 
                     "trip_id": trip_id, 
-                    "Route (Parsed)": route_parsed, 
-                    "Direction (Parsed)": direction_parsed, 
                     "Trip Start Date": start_date,
                     "Trip Start Time": start_time,
                     "stop_sequence": stop_sequence,
@@ -120,49 +199,21 @@ def fetch_and_process_data():
                 })
         realtime_df = pd.DataFrame(records)
 
-        # Fetch Static Stop Times Data
-        static_stop_times_df = pd.read_csv(
-            STATIC_STOP_TIMES_URL,
-            dtype={
-                'trip_id': str,
-                'stop_sequence': int,
-                'route_id': str,
-                'direction_id': str,
-                'service_id': str,
-                'trip_headsign': str,
-                'stop_name': str,
-                'stop_id': str,
-                'stop_lat': str, 
-                'stop_lon': str, 
-                'departure_time': str 
-            }
-        )
-        
-        static_stop_times_df['stop_lat'] = static_stop_times_df['stop_lat'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
-        static_stop_times_df['stop_lon'] = static_stop_times_df['stop_lon'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
-
-        static_stop_times_df = static_stop_times_df.rename(columns={
-            'route_id': 'Static Route ID',
-            'direction_id': 'Static Direction ID',
-            'service_id': 'Static Service ID',
-            'trip_headsign': 'Trip Headsign',
-            'stop_name': 'Static Stop Name',
-            'stop_id': 'Static Stop ID',
-            'departure_time': 'Static Departure Time',
-        })
-        
         realtime_df['stop_sequence'] = pd.to_numeric(realtime_df['stop_sequence'], errors='coerce').fillna(-1).astype(int) 
 
-        merged_df = pd.merge(realtime_df, static_stop_times_df, on=['trip_id', 'stop_sequence'], how='inner')
+        # 7. Change the join between stop_times df and realtime df from inner join to left join. left df is stop_times.
+        # Where there is no realtime data, mark as na
+        merged_df = pd.merge(static_stop_times_df, realtime_df, on=['trip_id', 'stop_sequence'], how='left')
 
-        now_utc10 = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=10)))
-        
         # Convert 'Realtime Departure Time' to datetime.time objects for calculation
-        merged_df['Realtime Departure Time Object'] = pd.to_datetime(merged_df['Realtime Departure Time'], format='%H:%M:%S', errors='coerce').dt.time
-
+        # If 'Realtime Departure Time' is 'N/A', convert to None for pd.isna to work
+        merged_df['Realtime Departure Time Object'] = merged_df['Realtime Departure Time'].apply(
+            lambda x: datetime.datetime.strptime(x, '%H:%M:%S').time() if isinstance(x, str) and x != "N/A" else None
+        )
+        
         def calculate_minutes_difference(departure_time_obj, current_full_datetime):
-            if pd.isna(departure_time_obj):
-                return None
+            if departure_time_obj is None or pd.isna(departure_time_obj):
+                return np.nan # Use np.nan for numerical columns where data is missing
             
             # Combine current date with departure time.
             # Make it timezone-aware using the same timezone as current_full_datetime
@@ -170,9 +221,9 @@ def fetch_and_process_data():
                 current_full_datetime.date(), departure_time_obj, tzinfo=current_full_datetime.tzinfo
             )
 
-            # If the departure time is earlier than the current time, return None
+            # If the departure time is earlier than the current time, return NaN so it can be filtered out
             if departure_datetime_today < current_full_datetime:
-                return None
+                return np.nan
             
             diff = departure_datetime_today - current_full_datetime
             return diff.total_seconds() / 60
@@ -200,7 +251,7 @@ if st.button("Refresh Data"):
 df = fetch_and_process_data()
 
 if not df.empty:
-    st.write(f"Data last updated: {datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=10))).strftime('%H:%M:%S')} (UTC+10)") 
+    st.write(f"Data last updated: {datetime.datetime.now(pytz.timezone('Australia/Melbourne')).strftime('%H:%M:%S')} (UTC+10)") 
 
     # --- Sidebar Filters ---
     st.sidebar.header("🔍 Filter Trips")
@@ -220,33 +271,34 @@ if not df.empty:
         temp_filtered_df = temp_filtered_df[temp_filtered_df["Static Stop Name"] == selected_stop_name]
 
 
-    # 2. Route Filter (cascading from Stop Name)
-    all_routes = sorted(temp_filtered_df["Route (Parsed)"].dropna().unique().tolist()) 
+    # 2. Route Filter (cascading from Stop Name) - Changed to multiselect and uses 'Display Route Name'
+    all_routes = sorted(temp_filtered_df["Display Route Name"].dropna().unique().tolist()) # Use Display Route Name
     if "Unknown" in all_routes:
         all_routes.remove("Unknown")
-    all_routes.insert(0, "All")
     
-    default_route_index = all_routes.index("All") if "All" in all_routes else 0 
-
-    selected_route = st.sidebar.selectbox(
-        "Select Route",
-        options=all_routes,
-        index=default_route_index 
+    # Add 'All' option for multiselect, and select it by default
+    options_routes = ["All"] + all_routes
+    selected_routes = st.sidebar.multiselect(
+        "Select Route(s)",
+        options=options_routes,
+        default=["All"] # Default to selecting 'All'
     )
-    if selected_route != "All":
-        temp_filtered_df = temp_filtered_df[temp_filtered_df["Route (Parsed)"] == selected_route]
+    if "All" not in selected_routes and selected_routes: # Filter only if 'All' is not selected and list is not empty
+        temp_filtered_df = temp_filtered_df[temp_filtered_df["Display Route Name"].isin(selected_routes)]
 
 
-    # 3. Trip Headsign Filter (cascading from Stop Name and Route)
+    # 3. Trip Headsign Filter (cascading from Stop Name and Route) - Changed to multiselect
     all_headsigns = sorted(temp_filtered_df["Trip Headsign"].dropna().unique().tolist())
-    all_headsigns.insert(0, "All")
-    selected_headsign = st.sidebar.selectbox(
-        "Select Trip Headsign",
-        options=all_headsigns,
-        index=0
+    
+    # Add 'All' option for multiselect, and select it by default
+    options_headsigns = ["All"] + all_headsigns
+    selected_headsigns = st.sidebar.multiselect(
+        "Select Trip Headsign(s)",
+        options=options_headsigns,
+        default=["All"] # Default to selecting 'All'
     )
-    if selected_headsign != "All":
-        temp_filtered_df = temp_filtered_df[temp_filtered_df["Trip Headsign"] == selected_headsign]
+    if "All" not in selected_headsigns and selected_headsigns: # Filter only if 'All' is not selected and list is not empty
+        temp_filtered_df = temp_filtered_df[temp_filtered_df["Trip Headsign"].isin(selected_headsigns)]
 
     # 4. Static Direction ID Filter (cascading from Stop Name, Route, and Trip Headsign)
     all_directions = sorted(temp_filtered_df["Static Direction ID"].dropna().unique().tolist())
@@ -266,7 +318,7 @@ if not df.empty:
     # Assign the fully filtered temp_filtered_df to final_filtered_df
     final_filtered_df = temp_filtered_df.copy() 
 
-    # Filter out rows where Departure_in_Min is None (i.e., bus has already departed)
+    # Filter out rows where Departure_in_Min is None (i.e., bus has already departed or no realtime)
     final_filtered_df = final_filtered_df.dropna(subset=['Departure_in_Min'])
     # Ensure Departure_in_Min is an integer for display
     final_filtered_df['Departure_in_Min'] = final_filtered_df['Departure_in_Min'].astype(int)
@@ -305,7 +357,7 @@ if not df.empty:
                                 color: #31333F;
                                 margin-top: 5px;
                             ">
-                                {row['Route (Parsed)']}
+                                {row['Display Route Name']}
                             </div>
                             """,
                             unsafe_allow_html=True
@@ -313,8 +365,7 @@ if not df.empty:
 
                     with col_destination:
                         st.write(f"**To {row['Trip Headsign']}**")
-                        # st.markdown(f"<small>Scheduled: {row['Static Departure Time']}</small>", unsafe_allow_html=True)
-                    
+                        
                     with col_scheduled_time:
                         st.markdown(f"<small>Scheduled:</small>", unsafe_allow_html=True)
                         st.write(f"**{row['Static Departure Time']}**")
@@ -345,10 +396,7 @@ if not df.empty:
                                 unsafe_allow_html=True
                             )
                         else:
-                            st.write("Departed") # This case should be rare due to dropna, but good for robustness
-                # No horizontal rule if using st.container(border=True)
-                # st.markdown("---") # Separator between trips
-
+                            st.write("Departed/N/A") 
     else:
         st.warning("No matching records found for the selected filters. Please try adjusting the filters or refreshing the data.")
 else:
