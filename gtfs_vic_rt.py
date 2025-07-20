@@ -48,7 +48,7 @@ st.title("🚍 Metro Bus Realtime Snapshot – VIC")
 
 # --- API Configuration ---
 
-api_key = "321077bd7df146b891bde8960ffa1893"
+api_key=st.secrets['API_key']
 base_url = "https://data-exchange-api.vicroads.vic.gov.au/opendata/v1/gtfsr/metrobus-tripupdates"
 headers = {"Ocp-Apim-Subscription-Key": api_key}
 params = {"subscription-key": api_key}
