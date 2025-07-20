@@ -4,6 +4,7 @@ import pandas as pd
 from google.transit import gtfs_realtime_pb2
 import datetime
 import pytz # Import pytz for timezone handling
+import numpy as np # Import numpy for NaN
 
 # --- Utility Functions ---
 
@@ -66,10 +67,9 @@ def fetch_and_process_data():
         # 2. Read calendar_dates.txt
         calendar_dates_df = pd.read_csv(CALENDAR_DATES_URL, dtype={'service_id': str, 'date': str, 'exception_type': str})
         
-        # 3. Filter calendar_dates.txt to current date and exception_type '1' (service added)
+        # 3. Filter calendar_dates.txt to current date (removed exception_type filter)
         calendar_dates_df = calendar_dates_df[
-            (calendar_dates_df['date'] == current_date_yyyymmdd) & 
-            (calendar_dates_df['exception_type'] == '2')
+            (calendar_dates_df['date'] == current_date_yyyymmdd) 
         ]
         
         if calendar_dates_df.empty:
@@ -111,22 +111,23 @@ def fetch_and_process_data():
         # This filters stop_times to only include services active today
         static_stop_times_df = pd.merge(
             static_stop_times_df,
-            calendar_dates_df[['service_id', 'date']],
+            calendar_dates_df[['service_id']], # Only need service_id for the join
             left_on='Static Service ID',
             right_on='service_id',
             how='inner'
         )
-        # Drop the redundant 'service_id' and 'date' columns from the merge
-        static_stop_times_df = static_stop_times_df.drop(columns=['service_id', 'date'])
+        # Drop the redundant 'service_id' column from the merge
+        static_stop_times_df = static_stop_times_df.drop(columns=['service_id'])
 
         # 6. Remove rows in stop_times df if static stop departure time is 4 hours before or after current time.
         # Convert 'Static Departure Time' to datetime.time objects for comparison
-        # Assume today's date for static times
         
         # Create a dummy date to combine with time for comparisons
         today_date = now_utc10.date()
 
         def parse_static_time_and_compare(time_str, current_full_datetime, window_hours=4):
+            if not isinstance(time_str, str): # Handle potential non-string values
+                return False
             try:
                 # Combine static time with today's date and the correct timezone
                 static_dt = datetime.datetime.combine(
@@ -137,7 +138,7 @@ def fetch_and_process_data():
                 
                 time_difference = abs((static_dt - current_full_datetime).total_seconds() / 3600) # in hours
                 return time_difference <= window_hours
-            except ValueError:
+            except ValueError: # Catch errors from strptime if format is unexpected
                 return False
 
         static_stop_times_df = static_stop_times_df[
@@ -147,7 +148,7 @@ def fetch_and_process_data():
         ]
 
         if static_stop_times_df.empty:
-            st.warning("No static trips found for the current date and time window.")
+            st.warning("No static trips found for the current date and time window after filtering.")
             return pd.DataFrame()
             
         # Fetch Realtime Data
@@ -170,7 +171,6 @@ def fetch_and_process_data():
 
             # TripDescriptor fields
             trip_id = trip.trip_id if trip.HasField("trip_id") else "N/A"
-            # route_parsed, direction_parsed = parse_trip_id(trip_id) # No longer needed, get from static
             start_date = trip.start_date if trip.HasField("start_date") else "Not Provided"
             start_time = trip.start_time if trip.HasField("start_time") else "Not Provided"
             
@@ -189,8 +189,6 @@ def fetch_and_process_data():
                     "Feed Timestamp": convert_unix_to_time(feed_header_timestamp), 
                     "Entity ID": entity.id, 
                     "trip_id": trip_id, 
-                    # "Route (Parsed)": route_parsed, # Removed
-                    # "Direction (Parsed)": direction_parsed, # Removed
                     "Trip Start Date": start_date,
                     "Trip Start Time": start_time,
                     "stop_sequence": stop_sequence,
@@ -206,14 +204,14 @@ def fetch_and_process_data():
         merged_df = pd.merge(static_stop_times_df, realtime_df, on=['trip_id', 'stop_sequence'], how='left')
 
         # Convert 'Realtime Departure Time' to datetime.time objects for calculation
-        # If 'Realtime Departure Time' is 'N/A', handle it as None or pd.NaT
+        # If 'Realtime Departure Time' is 'N/A', convert to None for pd.isna to work
         merged_df['Realtime Departure Time Object'] = merged_df['Realtime Departure Time'].apply(
-            lambda x: datetime.datetime.strptime(x, '%H:%M:%S').time() if x != "N/A" else None
+            lambda x: datetime.datetime.strptime(x, '%H:%M:%S').time() if isinstance(x, str) and x != "N/A" else None
         )
         
         def calculate_minutes_difference(departure_time_obj, current_full_datetime):
-            if pd.isna(departure_time_obj) or departure_time_obj is None:
-                return None
+            if departure_time_obj is None or pd.isna(departure_time_obj):
+                return np.nan # Use np.nan for numerical columns where data is missing
             
             # Combine current date with departure time.
             # Make it timezone-aware using the same timezone as current_full_datetime
@@ -221,9 +219,9 @@ def fetch_and_process_data():
                 current_full_datetime.date(), departure_time_obj, tzinfo=current_full_datetime.tzinfo
             )
 
-            # If the departure time is earlier than the current time, return None
+            # If the departure time is earlier than the current time, return NaN so it can be filtered out
             if departure_datetime_today < current_full_datetime:
-                return None
+                return np.nan
             
             diff = departure_datetime_today - current_full_datetime
             return diff.total_seconds() / 60
