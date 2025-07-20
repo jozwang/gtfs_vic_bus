@@ -34,7 +34,7 @@ st.set_page_config(page_title="Metro Bus Realtime Snapshot", layout="wide")
 col1, col2 = st.columns([5,5]) # Creates two columns with equal width (5/5 and 5/5)
 
 with col1:
-    st.title("🚍 PTV Metro Bus Realtime Snapshot – Box Hill")
+    st.title("🚍 PTV Metro Bus Realtime Snapshot – Watsonia") # Changed title
 
 with col2:
     # Assuming 'SkyBus Powerpoint Template.jpg' is in the root of your GitHub repo
@@ -48,7 +48,7 @@ headers = {"Ocp-Apim-Subscription-Key": api_key}
 params = {"subscription-key": api_key}
 
 # Updated static URLs
-STATIC_STOP_TIMES_URL = "https://raw.githubusercontent.com/jozwang/gtfs_vic_bus/refs/heads/main/stop_times_box_hill_4.csv"
+STATIC_STOP_TIMES_URL = "https://raw.githubusercontent.com/jozwang/gtfs_vic_bus/refs/heads/main/stop_times_Watsonia%20Station_4.csv" # Changed URL
 CALENDAR_DATES_URL = "https://raw.githubusercontent.com/jozwang/gtfs_vic_bus/refs/heads/main/calendar_dates.txt"
 
 
@@ -67,7 +67,7 @@ def fetch_and_process_data():
         # 2. Read calendar_dates.txt
         calendar_dates_df = pd.read_csv(CALENDAR_DATES_URL, dtype={'service_id': str, 'date': str, 'exception_type': str})
         
-        # 3. Filter calendar_dates.txt to current date (removed exception_type filter)
+        # 3. Filter calendar_dates.txt to current date (exception_type filter removed)
         calendar_dates_df = calendar_dates_df[
             (calendar_dates_df['date'] == current_date_yyyymmdd) 
         ]
@@ -90,7 +90,8 @@ def fetch_and_process_data():
                 'stop_id': str,
                 'stop_lat': str, 
                 'stop_lon': str, 
-                'departure_time': str 
+                'departure_time': str,
+                'route_short_name': str # Added route_short_name
             }
         )
         
@@ -98,13 +99,14 @@ def fetch_and_process_data():
         static_stop_times_df['stop_lon'] = static_stop_times_df['stop_lon'].astype(str).str.replace(r"[^\d.-]", "", regex=True).astype(float)
 
         static_stop_times_df = static_stop_times_df.rename(columns={
-            'route_id': 'Static Route ID',
+            'route_id': 'Static Route ID', # Keep original route_id for reference if needed
             'direction_id': 'Static Direction ID',
             'service_id': 'Static Service ID',
             'trip_headsign': 'Trip Headsign',
             'stop_name': 'Static Stop Name',
             'stop_id': 'Static Stop ID',
             'departure_time': 'Static Departure Time',
+            'route_short_name': 'Display Route Name' # Rename for display clarity
         })
         
         # 4. Inner join static_stop_times_df to calendar_dates_df
@@ -269,33 +271,34 @@ if not df.empty:
         temp_filtered_df = temp_filtered_df[temp_filtered_df["Static Stop Name"] == selected_stop_name]
 
 
-    # 2. Route Filter (cascading from Stop Name)
-    all_routes = sorted(temp_filtered_df["Static Route ID"].dropna().unique().tolist()) # Changed to Static Route ID
+    # 2. Route Filter (cascading from Stop Name) - Changed to multiselect and uses 'Display Route Name'
+    all_routes = sorted(temp_filtered_df["Display Route Name"].dropna().unique().tolist()) # Use Display Route Name
     if "Unknown" in all_routes:
         all_routes.remove("Unknown")
-    all_routes.insert(0, "All")
     
-    default_route_index = all_routes.index("All") if "All" in all_routes else 0 
-
-    selected_route = st.sidebar.selectbox(
-        "Select Route",
-        options=all_routes,
-        index=default_route_index 
+    # Add 'All' option for multiselect, and select it by default
+    options_routes = ["All"] + all_routes
+    selected_routes = st.sidebar.multiselect(
+        "Select Route(s)",
+        options=options_routes,
+        default=["All"] # Default to selecting 'All'
     )
-    if selected_route != "All":
-        temp_filtered_df = temp_filtered_df[temp_filtered_df["Static Route ID"] == selected_route] # Changed to Static Route ID
+    if "All" not in selected_routes and selected_routes: # Filter only if 'All' is not selected and list is not empty
+        temp_filtered_df = temp_filtered_df[temp_filtered_df["Display Route Name"].isin(selected_routes)]
 
 
-    # 3. Trip Headsign Filter (cascading from Stop Name and Route)
+    # 3. Trip Headsign Filter (cascading from Stop Name and Route) - Changed to multiselect
     all_headsigns = sorted(temp_filtered_df["Trip Headsign"].dropna().unique().tolist())
-    all_headsigns.insert(0, "All")
-    selected_headsign = st.sidebar.selectbox(
-        "Select Trip Headsign",
-        options=all_headsigns,
-        index=0
+    
+    # Add 'All' option for multiselect, and select it by default
+    options_headsigns = ["All"] + all_headsigns
+    selected_headsigns = st.sidebar.multiselect(
+        "Select Trip Headsign(s)",
+        options=options_headsigns,
+        default=["All"] # Default to selecting 'All'
     )
-    if selected_headsign != "All":
-        temp_filtered_df = temp_filtered_df[temp_filtered_df["Trip Headsign"] == selected_headsign]
+    if "All" not in selected_headsigns and selected_headsigns: # Filter only if 'All' is not selected and list is not empty
+        temp_filtered_df = temp_filtered_df[temp_filtered_df["Trip Headsign"].isin(selected_headsigns)]
 
     # 4. Static Direction ID Filter (cascading from Stop Name, Route, and Trip Headsign)
     all_directions = sorted(temp_filtered_df["Static Direction ID"].dropna().unique().tolist())
@@ -354,7 +357,7 @@ if not df.empty:
                                 color: #31333F;
                                 margin-top: 5px;
                             ">
-                                {row['Static Route ID']}
+                                {row['Display Route Name']}
                             </div>
                             """,
                             unsafe_allow_html=True
