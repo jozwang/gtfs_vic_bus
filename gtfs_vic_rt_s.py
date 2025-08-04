@@ -58,7 +58,7 @@ def fetch_and_process_data():
         # 1. Connect to Redis and fetch today's schedules
         # Assumes REDIS_URL is stored in Streamlit's secrets
         r = redis.from_url(st.secrets["REDIS_URL"], decode_responses=True)
-        schedules_json = r.get("schedules:box_hill:today")
+        schedules_json = r.get("schedules:box_hill:today_and_tomorrow")
 
         if not schedules_json:
             st.warning("Could not find today's schedule data in the Redis cache. Please ensure the daily job has run.")
