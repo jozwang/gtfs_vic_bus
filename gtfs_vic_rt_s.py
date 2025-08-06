@@ -70,9 +70,9 @@ def fetch_and_process_data():
         static_stop_times_df = pd.read_json(StringIO(schedules_json), orient='records')
 
           # --- NEW CODE: Filter for today's date before other processing ---
-        original_record_count = len(static_stop_times_df)
-        static_stop_times_df = static_stop_times_df[static_stop_times_df['date'] == today_date_int]
-        st.info(f"Filtered schedules for today's date ({today_date_int}). {len(static_stop_times_df)} of {original_record_count} records remain.")
+        # original_record_count = len(static_stop_times_df)
+        # static_stop_times_df = static_stop_times_df[static_stop_times_df['date'] == today_date_int]
+        # st.info(f"Filtered schedules for today's date ({today_date_int}). {len(static_stop_times_df)} of {original_record_count} records remain.")
         
         if static_stop_times_df.empty:
             st.warning("No static trips found for today's date. The daily cron job may not have run, or there are no scheduled services for today.")
