@@ -170,7 +170,7 @@ def fetch_and_process_data():
         realtime_df['stop_sequence'] = pd.to_numeric(realtime_df['stop_sequence'], errors='coerce').fillna(-1).astype(int)
 
         # Left join realtime data onto the static schedule
-        merged_df = pd.merge(static_stop_times_df, realtime_df, on=['trip_id', 'stop_sequence'], how='left')
+        merged_df = pd.merge(static_stop_times_df, realtime_df, on=['trip_id', 'stop_sequence'], how='inner')
 
         # Calculate departure minutes
         merged_df['Realtime Departure Time Object'] = merged_df['Realtime Departure Time'].apply(
