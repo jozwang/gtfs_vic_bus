@@ -172,6 +172,15 @@ def fetch_and_process_data():
         # Left join realtime data onto the static schedule
         merged_df = pd.merge(static_stop_times_df, realtime_df, on=['trip_id', 'stop_sequence'], how='inner')
 
+           # --- Remove duplicate rows after the merge ---
+        # Duplicates can be created if multiple real-time updates exist for a single static trip/stop.
+        # This will keep the first instance it finds.
+        merged_df.drop_duplicates(
+            subset=['trip_id', 'stop_sequence', 'Static Departure Time', 'Trip Start Date'],
+            keep='first',
+            inplace=True
+        )
+        
         # Calculate departure minutes
         merged_df['Realtime Departure Time Object'] = merged_df['Realtime Departure Time'].apply(
             lambda x: datetime.datetime.strptime(x, '%H:%M:%S').time() if isinstance(x, str) and x != "N/A" else None
