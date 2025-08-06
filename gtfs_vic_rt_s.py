@@ -137,10 +137,10 @@ def fetch_and_process_data():
 
         # ... right before the merge line
         st.subheader("Debugging: Static Data Preview")
-        st.write(static_stop_times_df[['trip_id', 'stop_sequence', 'Static Departure Time', 'Calendar Date', 'Display Route Name']].head())
+        st.write(static_stop_times_df[['trip_id', 'stop_sequence', 'Static Departure Time', 'Calendar Date', 'Display Route Name']].sort_values(by=['trip_id', 'stop_sequence']).head())
         
         st.subheader("Debugging: Realtime Data Preview")
-        st.write(realtime_df[['trip_id', 'stop_sequence', 'Realtime Departure Time', 'Trip Start Date']].head())
+        st.write(realtime_df[['trip_id', 'stop_sequence', 'Realtime Departure Time', 'Trip Start Date']].sort_values(by=['trip_id', 'stop_sequence']).head())
         st.write(f"Realtime dataframe has {len(realtime_df)} records.")
 
         # Left join realtime data onto the static schedule
