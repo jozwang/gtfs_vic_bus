@@ -70,9 +70,9 @@ def fetch_and_process_data():
         static_stop_times_df = pd.read_json(StringIO(schedules_json), orient='records')
 
           # --- NEW CODE: Filter for today's date before other processing ---
-        # original_record_count = len(static_stop_times_df)
-        # static_stop_times_df = static_stop_times_df[static_stop_times_df['date'] == today_date_int]
-        # st.info(f"Filtered schedules for today's date ({today_date_int}). {len(static_stop_times_df)} of {original_record_count} records remain.")
+        original_record_count = len(static_stop_times_df)
+        static_stop_times_df = static_stop_times_df[static_stop_times_df['date'] == today_date_int]
+        st.info(f"Filtered schedules for today's date ({today_date_int}). {len(static_stop_times_df)} of {original_record_count} records remain.")
         
         if static_stop_times_df.empty:
             st.warning("No static trips found for today's date. The daily cron job may not have run, or there are no scheduled services for today.")
@@ -135,15 +135,15 @@ def fetch_and_process_data():
         realtime_df = pd.DataFrame(records)
         realtime_df['stop_sequence'] = pd.to_numeric(realtime_df['stop_sequence'], errors='coerce').fillna(-1).astype(int)
 
-        # ... right before the merge line
-        st.subheader("Debugging: Static Data Preview")
-        # st.write(static_stop_times_df[['trip_id', 'stop_sequence', 'Static Departure Time', 'Calendar Date', 'Display Route Name']].sort_values(by=['trip_id', 'stop_sequence']).head())
-        st.write(static_stop_times_df.sort_values(by=['trip_id', 'stop_sequence']))
+        # # ... right before the merge line
+        # st.subheader("Debugging: Static Data Preview")
+        # # st.write(static_stop_times_df[['trip_id', 'stop_sequence', 'Static Departure Time', 'Calendar Date', 'Display Route Name']].sort_values(by=['trip_id', 'stop_sequence']).head())
+        # st.write(static_stop_times_df.sort_values(by=['trip_id', 'stop_sequence']))
                  
-        st.subheader("Debugging: Realtime Data Preview")
-        # st.write(realtime_df[['trip_id', 'stop_sequence', 'Realtime Departure Time', 'Trip Start Date']].sort_values(by=['trip_id', 'stop_sequence']).head())
-        st.write(realtime_df.sort_values(by=['trip_id', 'stop_sequence']))
-        st.write(f"Realtime dataframe has {len(realtime_df)} records.")
+        # st.subheader("Debugging: Realtime Data Preview")
+        # # st.write(realtime_df[['trip_id', 'stop_sequence', 'Realtime Departure Time', 'Trip Start Date']].sort_values(by=['trip_id', 'stop_sequence']).head())
+        # st.write(realtime_df.sort_values(by=['trip_id', 'stop_sequence']))
+        # st.write(f"Realtime dataframe has {len(realtime_df)} records.")
 
         # Left join realtime data onto the static schedule
         merged_df = pd.merge(static_stop_times_df, realtime_df, on=['trip_id', 'stop_sequence'], how='inner')
