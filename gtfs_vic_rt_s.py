@@ -135,6 +135,14 @@ def fetch_and_process_data():
         realtime_df = pd.DataFrame(records)
         realtime_df['stop_sequence'] = pd.to_numeric(realtime_df['stop_sequence'], errors='coerce').fillna(-1).astype(int)
 
+        # ... right before the merge line
+        st.subheader("Debugging: Static Data Preview")
+        st.write(static_stop_times_df[['trip_id', 'stop_sequence', 'Static Departure Time', 'Calendar Date', 'Display Route Name']].head())
+        
+        st.subheader("Debugging: Realtime Data Preview")
+        st.write(realtime_df[['trip_id', 'stop_sequence', 'Realtime Departure Time', 'Trip Start Date']].head())
+        st.write(f"Realtime dataframe has {len(realtime_df)} records.")
+
         # Left join realtime data onto the static schedule
         merged_df = pd.merge(static_stop_times_df, realtime_df, on=['trip_id', 'stop_sequence'], how='inner')
 
