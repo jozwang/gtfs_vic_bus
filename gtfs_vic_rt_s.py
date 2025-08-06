@@ -90,19 +90,42 @@ def fetch_and_process_data():
         # 5. Remove rows in stop_times df if static stop departure time is 4 hours before or after current time.
         today_date = now_utc10.date()
 
-        def parse_static_time_and_compare(time_str, current_full_datetime, window_hours=4):
+        def parse_gtfs_time(time_str):
+            """
+            Parses a GTFS time string (e.g., '25:00:00') into a timedelta object from midnight.
+            """
             if not isinstance(time_str, str):
-                return False
+                return None
             try:
-                static_dt = datetime.datetime.combine(
-                    today_date,
-                    datetime.datetime.strptime(time_str, '%H:%M:%S').time(),
-                    tzinfo=melbourne_tz
-                )
-                time_difference = abs((static_dt - current_full_datetime).total_seconds() / 3600)
-                return time_difference <= window_hours
+                hours, minutes, seconds = map(int, time_str.split(':'))
+                return datetime.timedelta(hours=hours, minutes=minutes, seconds=seconds)
             except ValueError:
+                return None
+        
+        def parse_static_time_and_compare(time_str, current_full_datetime, window_hours=4):
+            """
+            Checks if a GTFS time string falls within a specified window of the current time.
+            """
+            gtfs_timedelta = parse_gtfs_time(time_str)
+            if gtfs_timedelta is None:
                 return False
+            
+            # Get today's midnight in Melbourne time
+            melbourne_tz = pytz.timezone('Australia/Melbourne')
+            today_midnight = datetime.datetime.combine(current_full_datetime.date(), datetime.time.min, tzinfo=melbourne_tz)
+            
+            # Calculate the full datetime for the static trip
+            static_dt = today_midnight + gtfs_timedelta
+        
+            # Handle trips that spill over into the next day
+            # This check is crucial for GTFS times > 24:00:00
+            if static_dt < current_full_datetime - datetime.timedelta(hours=window_hours):
+                # The GTFS time is for the next day's service
+                static_dt += datetime.timedelta(days=1)
+                
+            time_difference = abs((static_dt - current_full_datetime).total_seconds() / 3600)
+            
+            return time_difference <= window_hours
 
         static_stop_times_df = static_stop_times_df[
             static_stop_times_df['Static Departure Time'].apply(
