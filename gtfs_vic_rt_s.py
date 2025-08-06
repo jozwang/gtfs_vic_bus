@@ -251,7 +251,10 @@ if not df.empty:
                         st.write(f"**To {row['Trip Headsign']}**")
                     with col_scheduled_time:
                         st.markdown(f"<small>Scheduled:</small>", unsafe_allow_html=True)
-                        st.write(f"**{row['Static Departure Time']}**")
+                        # st.write(f"**{row['Static Departure Time']}**")
+                         # Explicitly format the time to ensure no date is added
+                        scheduled_time_str = row['Static Departure Time']
+                        st.write(f"**{scheduled_time_str}**")
                     with col_estimated_time:
                         st.markdown(f"<small>Estimated Departure:</small>", unsafe_allow_html=True)
                         st.write(f"**{row['Realtime Departure Time']}**")
