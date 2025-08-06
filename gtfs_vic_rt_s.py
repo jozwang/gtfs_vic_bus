@@ -52,7 +52,8 @@ def fetch_and_process_data():
     try:
         melbourne_tz = pytz.timezone('Australia/Melbourne')
         now_utc10 = datetime.datetime.now(melbourne_tz)
-
+        today_date_int = int(now_utc10.strftime('%Y%m%d')) # <-- NEW: Define today's date as an integer
+        
         # --- REVISED SECTION: Fetch Static Stop Times from Redis ---
         
         # 1. Connect to Redis and fetch today's schedules
@@ -67,6 +68,15 @@ def fetch_and_process_data():
         # 2. Load the JSON data into a DataFrame
         # The data from Redis is already filtered for today's services
         static_stop_times_df = pd.read_json(StringIO(schedules_json), orient='records')
+
+          # --- NEW CODE: Filter for today's date before other processing ---
+        original_record_count = len(static_stop_times_df)
+        static_stop_times_df = static_stop_times_df[static_stop_times_df['date'] == today_date_int]
+        st.info(f"Filtered schedules for today's date ({today_date_int}). {len(static_stop_times_df)} of {original_record_count} records remain.")
+        
+        if static_stop_times_df.empty:
+            st.warning("No static trips found for today's date. The daily cron job may not have run, or there are no scheduled services for today.")
+            return pd.DataFrame()
 
         # 3. Ensure data types are correct (matching the old script's expectations)
         static_stop_times_df['stop_lat'] = static_stop_times_df['stop_lat'].astype(float)
